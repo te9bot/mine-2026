@@ -17,6 +17,7 @@ import { HeroTransitionProvider } from "../context/HeroTransitionProvider";
 import { ProjectHoverProvider } from "../context/ProjectHoverContext";
 import { CaseStudyProvider } from "../context/CaseStudyContext";
 import { ThemeSweep } from "./ThemeSweep";
+import { FerrofluidBackdrop } from "./FerrofluidBackdrop";
 import { ThemeBridge, type ThemeContextValue } from "@/context/ThemeContext";
 import { DebugSettingsBridge } from "@/context/DebugSettingsContext";
 import type { DebugSettings } from "@/config/debugSettings";
@@ -61,6 +62,7 @@ function SceneContent({
           <ProjectHoverProvider>
             <CaseStudyProvider>
               <ThemeSweep />
+              <FerrofluidBackdrop />
               <Environment files="/hdri/city.hdr" />
 
               <Suspense fallback={null}>
