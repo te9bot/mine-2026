@@ -51,7 +51,7 @@ export async function checkRecoveryBrowser(devtools, sessionId, base, artifactRo
   await wait("document.querySelector('[data-renderer-status]')?.dataset.rendererStatus === 'failed'", "WebGL initialization failure");
   await fallback("recovery-no-webgl");
   await send("Page.removeScriptToEvaluateOnNewDocument", { identifier: script.identifier });
-  await send("Network.setBlockedURLs", { urls: ["*czaszka2draco.glb*"] });
+  await send("Network.setBlockedURLs", { urls: ["*pikachu.glb*"] });
   await navigate("/");
   await wait("document.querySelector('[data-renderer-status]')?.dataset.rendererStatus === 'failed'", "critical model load failure");
   await fallback("recovery-critical-asset");

@@ -273,7 +273,7 @@ export const CONFIG = {
     LAMP_SCALE: 0.78,
     LAMP_POSITION: { x: -0.34, y: 0, z: -0.23 },
     LEVITATING_LAMP: {
-      WOOD_URL: "/textures/music-cabinet/walnut.jpg",
+      WOOD_URL: "/textures/music-cabinet/walnut.webp",
       BASE_RADIUS: 0.105,
       BASE_HEIGHT: 0.03,
       BASE_BEVEL: 0.008,
@@ -447,7 +447,7 @@ export const CONFIG = {
   model: {
     PIKACHU_ROTATION: { x: 0.08, y: -0.38, z: 0 },
     FUR: {
-      SHELLS: 24,
+      SHELLS: 20,
       SHELLS_LOW: 10,
       LENGTH: 0.085,
       GRAVITY: 0.03,
