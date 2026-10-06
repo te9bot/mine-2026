@@ -50,3 +50,6 @@ plans/
 
 # blender backups
 *.blend1
+
+# local music (copyrighted, not published)
+/public/media/music/
