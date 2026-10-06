@@ -296,6 +296,7 @@ export const CONFIG = {
     ARTWORK_PORTRAIT_URL: "/media/workstation/artwork-portrait.webp",
     ARTWORK_RONALDO_URL: "/media/workstation/artwork-messi.webp",
     MOUSE_MODEL_URL: "/glbs/mouse.glb",
+    PLANT_MODEL_URL: "/glbs/plant.glb",
     ARTWORK_PORTRAIT_POSITION: { x: 0.77, y: 0.72, z: -0.692 },
     ARTWORK_RONALDO_POSITION: { x: 1.08, y: 0.7365, z: -0.692 },
     ARTWORK_PORTRAIT_SIZE: { x: 0.3, y: 0.42 },

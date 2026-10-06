@@ -11,7 +11,7 @@ import { LevitatingLamp } from "./LevitatingLamp";
 import { SkateboardDeck } from "./SkateboardDeck";
 import { DeskCollectionProps } from "./WorkstationDeskProps";
 import { WorkstationController } from "./WorkstationController";
-import { Block, Ellipsoid } from "./WorkstationPrimitives";
+import { Block } from "./WorkstationPrimitives";
 export { Block } from "./WorkstationPrimitives";
 
 type Point = { x: number; y: number; z: number };
@@ -39,6 +39,19 @@ function FramedArtwork({ name, position, size, rotation, texture }: {
       <meshStandardMaterial map={texture} roughness={0.88} envMapIntensity={0.08} />
     </mesh>
   </group>;
+}
+
+function WindowsillPlant() {
+  const { scene } = useGLTF(CONFIG.workstation.PLANT_MODEL_URL);
+  const model = useMemo(() => {
+    const clone = scene.clone(true);
+    clone.traverse(object => {
+      object.raycast = noRaycast;
+      if (object instanceof Mesh && object.material instanceof MeshStandardMaterial) object.material.envMapIntensity = 0.25;
+    });
+    return clone;
+  }, [scene]);
+  return <primitive object={model} />;
 }
 
 function WorkstationMouse() {
@@ -143,13 +156,7 @@ export function WallProxies({ supportY }: { supportY: number }) {
       <SkateboardDeck />
     </group>
     <group name="WindowsillPlant" position={xyz(w.plantPosition, supportY)}>
-      <mesh position={[0, 0.047, 0]} raycast={noRaycast}>
-        <cylinderGeometry args={[0.056, 0.042, 0.094, 16]} />
-        <meshStandardMaterial color="#9c7864" roughness={0.9} envMapIntensity={0.15} />
-      </mesh>
-      {Array.from({ length: 7 }, (_, i) => <group key={i} rotation={[0, i * 2.4, 0]}>
-        <Ellipsoid size={[0.019, 0.095, 0.009]} position={[0.035, 0.16 + (i % 2) * 0.025, 0]} rotation={[0, 0, -0.5]} color={i % 2 ? "#52634b" : "#728064"} />
-      </group>)}
+      <WindowsillPlant />
     </group>
   </group>;
 }
