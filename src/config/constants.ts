@@ -44,7 +44,7 @@ export const CONFIG = {
     SHARPNESS: 3,
     SHIMMER: 1,
     GLOW: 2,
-    OPACITY: 0.45,
+    OPACITY: 0.27,
     FLOW_DIRECTION: "down" as const,
     MOUSE_STRENGTH: 1,
     MOUSE_RADIUS: 0.3,
