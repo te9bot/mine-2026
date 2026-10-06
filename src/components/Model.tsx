@@ -189,10 +189,13 @@ export default function Model({ isDebug }: { isDebug: boolean }) {
         ? modelViewport.width * CONFIG.model.NARROW_COMPACT_X_FRACTION
         : 0;
 
+      const tracking = inDetails && !prefersReducedMotion && inputMode === "fine";
+      const leanX = tracking ? THREE.MathUtils.clamp(state.pointer.x - modelAnchorRef.current.xFraction * 2, -1, 1) * CONFIG.model.COMPANION.LEAN * modelViewport.width : 0;
+      const leanY = tracking ? THREE.MathUtils.clamp(state.pointer.y - modelAnchorRef.current.yFraction * 2, -1, 1) * CONFIG.model.COMPANION.LEAN * modelViewport.height : 0;
       const targetX =
-        inDetails ? detailsTargetX : layoutMode === "narrow" ? narrowHeroX : 0;
+        (inDetails ? detailsTargetX : layoutMode === "narrow" ? narrowHeroX : 0) + leanX;
       const targetY =
-        inDetails ? detailsTargetY : heroYCurrent;
+        (inDetails ? detailsTargetY : heroYCurrent) + leanY;
 
       animGroupRef.current.position.x = teleported
         ? targetX
@@ -234,11 +237,14 @@ export default function Model({ isDebug }: { isDebug: boolean }) {
     if (mesh.current) {
       const t = state.clock.getElapsedTime() * CONFIG.model.IDLE_ROTATION_SPEED;
       const idle = prefersReducedMotion ? 0 : CONFIG.model.IDLE_MAX_ANGLE;
-      const pointer = !prefersReducedMotion && inputMode === "fine" && !inDetails
-        ? CONFIG.model.CURSOR_MAX_ANGLE
+      const tracking = !prefersReducedMotion && inputMode === "fine";
+      const pointer = tracking
+        ? inDetails ? CONFIG.model.COMPANION.LOOK_MAX_ANGLE : CONFIG.model.CURSOR_MAX_ANGLE
         : 0;
-      const x = -THREE.MathUtils.clamp(state.pointer.y, -1, 1) * pointer;
-      const y = THREE.MathUtils.clamp(state.pointer.x, -1, 1) * pointer;
+      const lookX = inDetails ? state.pointer.x - modelAnchorRef.current.xFraction * 2 : state.pointer.x;
+      const lookY = inDetails ? state.pointer.y - modelAnchorRef.current.yFraction * 2 : state.pointer.y;
+      const x = -THREE.MathUtils.clamp(lookY, -1, 1) * pointer;
+      const y = THREE.MathUtils.clamp(lookX, -1, 1) * pointer;
       const length = Math.hypot(x, y);
       const limit = length > pointer && length > 0 ? pointer / length : 1;
       mesh.current.rotation.x = THREE.MathUtils.damp(mesh.current.rotation.x, x * limit, CONFIG.model.TILT_RESPONSE, dt);

@@ -136,3 +136,9 @@ The original plan was to build a minimalist digital CV first, followed by an add
 #### Planned Stack
 
 Next.js, React, TypeScript, Tailwind CSS, R3F, Drei, Postprocessing, Leva, GSAP or Motion, Blender.
+
+---
+
+## 📷 Credits
+
+- Workstation wall poster: "Lionel Messi, Argentina, 2022 FIFA World Cup" by Hossein Zohrevand, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Lionel-Messi-Argentina-2022-FIFA-World-Cup.jpg), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Cropped to fit the frame.

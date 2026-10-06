@@ -11,11 +11,10 @@ import { LevitatingLamp } from "./LevitatingLamp";
 import { SkateboardDeck } from "./SkateboardDeck";
 import { DeskCollectionProps } from "./WorkstationDeskProps";
 import { WorkstationController } from "./WorkstationController";
-import { Block, Cylinder, Ellipsoid } from "./WorkstationPrimitives";
+import { Block, Ellipsoid } from "./WorkstationPrimitives";
 export { Block } from "./WorkstationPrimitives";
 
 type Point = { x: number; y: number; z: number };
-const charcoal = "#282d30";
 const bone = "#b9b4a7";
 const noRaycast = () => null;
 const configureArtworkTextures = (textures: Texture[]) => {
@@ -42,14 +41,22 @@ function FramedArtwork({ name, position, size, rotation, texture }: {
   </group>;
 }
 
+function WorkstationMouse() {
+  const { scene } = useGLTF(CONFIG.workstation.MOUSE_MODEL_URL);
+  const model = useMemo(() => {
+    const clone = scene.clone(true);
+    clone.traverse(object => { object.raycast = noRaycast; });
+    return clone;
+  }, [scene]);
+  return <primitive object={model} />;
+}
+
 export function DesktopProxies({ supportY, worldScale }: { supportY: number; worldScale: number }) {
   const { workstation: w } = useDebugSettings();
   return <group name="DesktopAccessories">
     <DeskCollectionProps supportY={supportY} />
     <group name="Mouse" position={xyz(w.mousePosition, supportY)} rotation={[0, MathUtils.degToRad(CONFIG.workstation.PROXY_YAW.mouse), 0]}>
-      <Ellipsoid size={[0.032, 0.019, 0.054]} position={[0, 0.019, 0]} />
-      <Cylinder radius={0.007} height={0.006} rotation={[0, 0, Math.PI / 2]} position={[0, 0.036, -0.017]} />
-      <Block size={[0.001, 0.001, 0.025]} position={[0, 0.037, -0.019]} color={charcoal} />
+      <WorkstationMouse />
     </group>
     <WorkstationController supportY={supportY} />
     <LevitatingLamp supportY={supportY} worldScale={worldScale} />
@@ -126,7 +133,7 @@ export function WallProxies({ supportY }: { supportY: number }) {
       texture={portraitArtwork}
     />
     <FramedArtwork
-      name="RonaldoArtwork"
+      name="MessiArtwork"
       position={xyz(w.ronaldoArtworkPosition, supportY)}
       size={CONFIG.workstation.ARTWORK_RONALDO_SIZE}
       rotation={CONFIG.workstation.ARTWORK_ROTATION.ronaldo}
