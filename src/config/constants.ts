@@ -35,22 +35,20 @@ export const FONTS = {
 const SCROLL_TIMELINE_VIEWPORTS = 1.5;
 
 export const CONFIG = {
-  ferrofluid: {
-    SPEED: 0.3,
-    SCALE: 1,
-    TURBULENCE: 1,
-    FLUIDITY: 0.1,
-    RIM_WIDTH: 0.2,
-    SHARPNESS: 3,
-    SHIMMER: 1,
-    GLOW: 2,
-    OPACITY: 0.27,
-    FLOW_DIRECTION: "down" as const,
-    MOUSE_STRENGTH: 1,
-    MOUSE_RADIUS: 0.3,
-    MOUSE_DAMPENING: 0.15,
+  lightPillar: {
+    TOP_COLOR: "#060606",
+    BOTTOM_COLOR: "#ffc100",
+    INTENSITY: 0.85,
+    ROTATION_SPEED: 0.3,
+    GLOW_AMOUNT: 0.005,
+    PILLAR_WIDTH: 3,
+    PILLAR_HEIGHT: 0.4,
+    PILLAR_ROTATION: 0,
+    OPACITY: 0.45,
     REVEAL_FADE: 0.15,
     PLANE_OFFSET: 0.05,
+    QUALITY: { ITERATIONS: 80, WAVE_ITERATIONS: 4, RESOLUTION_SCALE: 0.5 },
+    QUALITY_LOW: { ITERATIONS: 40, WAVE_ITERATIONS: 2, RESOLUTION_SCALE: 0.35 },
   },
   heroAssembly: {
     UNFOLD_START: 0.025,

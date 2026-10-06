@@ -142,4 +142,4 @@ Next.js, React, TypeScript, Tailwind CSS, R3F, Drei, Postprocessing, Leva, GSAP 
 ## 📷 Credits
 
 - Workstation wall poster: "Lionel Messi, Argentina, 2022 FIFA World Cup" by Hossein Zohrevand, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Lionel-Messi-Argentina-2022-FIFA-World-Cup.jpg), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Cropped to fit the frame.
-- Ferrofluid background shader adapted from the [Ferrofluid](https://reactbits.dev) component by [React Bits](https://github.com/DavidHDev/react-bits), ported to a Three.js backdrop inside the scene.
+- Light pillar background shader adapted from the [Light Pillar](https://reactbits.dev) component by [React Bits](https://github.com/DavidHDev/react-bits), ported to a Three.js backdrop inside the scene.
