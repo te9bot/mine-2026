@@ -70,7 +70,7 @@ export function furBaldSpots(scene: THREE.Object3D) {
   return spots.slice(0, MAX_BALD_SPOTS);
 }
 
-export function furShellGeometry(source: THREE.BufferGeometry, shells: number) {
+export function furShellGeometry(source: THREE.BufferGeometry, shells: number, baldSpots: THREE.Vector4[]) {
   const interior = source.getAttribute("fragmentInterior");
   const length = source.getAttribute("furLength");
   const keep: number[] = [];
@@ -88,6 +88,20 @@ export function furShellGeometry(source: THREE.BufferGeometry, shells: number) {
       }
     });
     geometry.setAttribute(name, new THREE.Float32BufferAttribute(values, attribute.itemSize));
+  }
+  const position = geometry.getAttribute("position");
+  const furLength = geometry.getAttribute("furLength");
+  const point = new THREE.Vector3();
+  const centre = new THREE.Vector3();
+  for (let i = 0; i < position.count; i++) {
+    point.fromBufferAttribute(position, i);
+    let mask = furLength.getX(i);
+    for (const spot of baldSpots) {
+      if (spot.w <= 0) continue;
+      const t = THREE.MathUtils.clamp((point.distanceTo(centre.set(spot.x, spot.y, spot.z)) - spot.w * 0.85) / (spot.w * 0.65), 0, 1);
+      mask *= t * t * (3 - 2 * t);
+    }
+    furLength.setX(i, mask);
   }
   const heights = new Float32Array(shells);
   for (let i = 0; i < shells; i++) heights[i] = (i + 1) / shells;
@@ -116,14 +130,13 @@ diffuseColor.rgb *= mix(${CONFIG.model.FUR.ROOT_SHADE.toFixed(3)}, 1.0, vGloss);
   material.needsUpdate = true;
 }
 
-export function applyFurShader(material: THREE.MeshStandardMaterial, baldSpots: THREE.Vector4[]) {
+export function applyFurShader(material: THREE.MeshStandardMaterial) {
   const { LENGTH, GRAVITY, DENSITY, CLUMP, ROOT_SHADE, TIP_LIGHT } = CONFIG.model.FUR;
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uFurLength = { value: LENGTH };
     shader.uniforms.uFurGravity = { value: GRAVITY };
     shader.uniforms.uFurDensity = { value: DENSITY };
     shader.uniforms.uFurClump = { value: CLUMP };
-    shader.uniforms.uFurBald = { value: baldSpots };
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
@@ -132,22 +145,30 @@ attribute float aShell;
 attribute float furLength;
 uniform float uFurLength;
 uniform float uFurGravity;
-uniform vec4 uFurBald[${MAX_BALD_SPOTS}];
 varying vec3 vFurPosition;
-varying float vFurShell;`,
+varying vec3 vFurClump;
+varying float vFurShell;
+float furHash(vec3 p) {
+  p = fract(p * 0.3183099 + 0.1);
+  p *= 17.0;
+  return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+}
+float furNoise(vec3 x) {
+  vec3 i = floor(x);
+  vec3 f = fract(x);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(mix(furHash(i), furHash(i + vec3(1, 0, 0)), f.x), mix(furHash(i + vec3(0, 1, 0)), furHash(i + vec3(1, 1, 0)), f.x), f.y),
+             mix(mix(furHash(i + vec3(0, 0, 1)), furHash(i + vec3(1, 0, 1)), f.x), mix(furHash(i + vec3(0, 1, 1)), furHash(i + vec3(1, 1, 1)), f.x), f.y), f.z);
+}`,
       )
       .replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
-float furMask = furLength;
-for (int i = 0; i < ${MAX_BALD_SPOTS}; i++) {
-  vec4 spot = uFurBald[i];
-  if (spot.w > 0.0) furMask *= smoothstep(spot.w * 0.85, spot.w * 1.5, distance(position, spot.xyz));
-}
-float furHeight = aShell * furMask;
+float furHeight = aShell * furLength;
 transformed += normalize(objectNormal) * uFurLength * furHeight;
 transformed.y -= uFurGravity * furHeight * furHeight;
 vFurPosition = position;
+vFurClump = vec3(furNoise(position * 11.0), furNoise(position * 11.0 + 17.0), furNoise(position * 11.0 + 31.0)) - 0.5;
 vFurShell = aShell;`,
       );
     shader.fragmentShader = shader.fragmentShader
@@ -157,6 +178,7 @@ vFurShell = aShell;`,
 uniform float uFurDensity;
 uniform float uFurClump;
 varying vec3 vFurPosition;
+varying vec3 vFurClump;
 varying float vFurShell;
 float furHash(vec3 p) {
   p = fract(p * 0.3183099 + 0.1);
@@ -182,8 +204,7 @@ float furStrand(vec3 p, out float tint) {
         `#include <clipping_planes_fragment>
 float furTint = 0.5;
 {
-  vec3 clump = vec3(furNoise(vFurPosition * 11.0), furNoise(vFurPosition * 11.0 + 17.0), furNoise(vFurPosition * 11.0 + 31.0)) - 0.5;
-  vec3 strandPosition = vFurPosition * uFurDensity + clump * uFurClump;
+  vec3 strandPosition = vFurPosition * uFurDensity + vFurClump * uFurClump;
   float tintA;
   float tintB;
   float a = furStrand(strandPosition, tintA);
@@ -199,6 +220,6 @@ float furTint = 0.5;
 diffuseColor.rgb *= mix(${ROOT_SHADE.toFixed(3)}, ${TIP_LIGHT.toFixed(3)}, vFurShell) * (0.88 + furTint * 0.24);`,
       );
   };
-  material.customProgramCacheKey = () => "pikachu-fur";
+  material.customProgramCacheKey = () => "pikachu-fur-v2";
   material.needsUpdate = true;
 }

@@ -54,16 +54,16 @@ export function PikachuFragments({
       envMapIntensity: CONFIG.model.FUR.ENV_INTENSITY,
       clippingPlanes,
     });
-    applyFurShader(material, baldSpots);
+    applyFurShader(material);
     return material;
-  }, [clippingPlanes, baldSpots]);
+  }, [clippingPlanes]);
 
   const fur = useMemo(() => {
-    const mesh = new THREE.InstancedMesh(furShellGeometry(geometry, shells), furMaterial, shells);
+    const mesh = new THREE.InstancedMesh(furShellGeometry(geometry, shells, baldSpots), furMaterial, shells);
     mesh.frustumCulled = false;
     mesh.raycast = () => null;
     return mesh;
-  }, [geometry, shells, furMaterial]);
+  }, [geometry, shells, furMaterial, baldSpots]);
 
   useEffect(() => {
     const restoreSurface = applySkullFragmentShader(surfaceMaterial, fragments, exitDissolve.current);
