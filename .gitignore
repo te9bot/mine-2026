@@ -46,6 +46,7 @@ raw/
 /public/source-manifest.version
 
 # local agent state
-.claude/skills/
-.claude/worktrees/
 plans/
+
+# blender backups
+*.blend1

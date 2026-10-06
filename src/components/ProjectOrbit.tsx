@@ -1,7 +1,7 @@
 import { useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, type RefObject } from "react";
-import { Box3, BufferGeometry, DoubleSide, Group, MathUtils, Matrix4, ShaderMaterial, SRGBColorSpace, Vector2, Vector3, Vector4, VideoTexture } from "three";
+import { Box3, BufferGeometry, DoubleSide, Group, MathUtils, Matrix4, ShaderMaterial, SRGBColorSpace, Vector2, Vector3, Vector4, VideoTexture, type Texture } from "three";
 import { CONFIG } from "@/config/constants";
 import { projectsData } from "@/data/content";
 import { useHeroLayout } from "@/context/HeroLayoutContext";
@@ -20,7 +20,14 @@ import { fitHeroOrbitSlot, heroModelSlot } from "@/lib/heroModelPlacement";
 import { useSceneCapabilities } from "@/context/SceneCapabilitiesContext";
 
 const C = CONFIG.projectOrbit;
-const project = projectsData.find((project) => project.slug === "controller-configurator")!;
+const PROJECT_PREVIEWS = projectsData.map((project) => project.preview);
+const project = projectsData[0];
+
+function coverFor(texture: Texture) {
+  const image = texture.image as { width: number; height: number };
+  const aspect = image.width / image.height;
+  return new Vector2(Math.max(1, PROJECT_ORBIT_ASPECT / aspect), Math.max(1, aspect / PROJECT_ORBIT_ASPECT));
+}
 
 export function ProjectOrbit({ colliderRef, entranceProgressRef, skullGeometry, skullRef }: {
   colliderRef: RefObject<ProjectOrbitCollider>;
@@ -28,10 +35,13 @@ export function ProjectOrbit({ colliderRef, entranceProgressRef, skullGeometry, 
   skullGeometry: BufferGeometry;
   skullRef: RefObject<Group | null>;
 }) {
-  const texture = useTexture(project.preview, (loaded) => {
-    loaded.colorSpace = SRGBColorSpace;
-    loaded.needsUpdate = true;
+  const textures = useTexture(PROJECT_PREVIEWS, (loaded) => {
+    for (const item of Array.isArray(loaded) ? loaded : [loaded]) {
+      item.colorSpace = SRGBColorSpace;
+      item.needsUpdate = true;
+    }
   });
+  const texture = textures[0];
   const heroLayout = useHeroLayout();
   const { responsiveScale } = heroLayout;
   const { layoutMode, qualityTier } = useSceneCapabilities();
@@ -68,8 +78,9 @@ export function ProjectOrbit({ colliderRef, entranceProgressRef, skullGeometry, 
   const layout = useMemo(() => projectOrbitLayout({ count: settings.count, gap: settings.gap, cardScale: settings.cardScale }), [settings.count, settings.gap, settings.cardScale]);
   const collisionShape = useMemo(() => projectOrbitCollisionShape(layout), [layout]);
   const geometries = useMemo(() => Array.from({ length: layout.count }, (_, index) => createProjectOrbitGeometry(radius, layout, index)), [radius, layout]);
-  const hudTexture = useMemo(() => createProjectOrbitHud(project.title), []);
-  useEffect(() => () => hudTexture.dispose(), [hudTexture]);
+  const hudTextures = useMemo(() => projectsData.map((item) => createProjectOrbitHud(item.title)), []);
+  useEffect(() => () => hudTextures.forEach((item) => item.dispose()), [hudTextures]);
+  const hudTexture = hudTextures[0];
   const material = useMemo(() => {
     const image = texture.image as { width: number; height: number };
     const aspect = image.width / image.height;
@@ -167,6 +178,27 @@ export function ProjectOrbit({ colliderRef, entranceProgressRef, skullGeometry, 
 
   useEffect(() => () => geometries.forEach((geometry) => geometry.dispose()), [geometries]);
   useEffect(() => () => material.dispose(), [material]);
+  const cardMaterials = useMemo(() => Array.from({ length: layout.count }, (_, index) => {
+    const slot = index % projectsData.length;
+    if (slot === 0) return material;
+    return new ShaderMaterial({
+      vertexShader: projectOrbitVertexShader,
+      fragmentShader: projectOrbitFragmentShader,
+      uniforms: {
+        ...material.uniforms,
+        uMap: { value: textures[slot] },
+        uHudMap: { value: hudTextures[slot] },
+        uVideo: { value: false },
+        uCover: { value: coverFor(textures[slot]) },
+      },
+      side: DoubleSide,
+      transparent: true,
+      depthWrite: false,
+      forceSinglePass: true,
+      toneMapped: false,
+    });
+  }), [material, textures, hudTextures, layout.count]);
+  useEffect(() => () => cardMaterials.forEach((item) => { if (item !== material) item.dispose(); }), [cardMaterials, material]);
   useEffect(() => () => { colliderRef.current.object = null; colliderRef.current.active = false; }, [colliderRef]);
 
   useFrame((state, delta) => {
@@ -280,7 +312,7 @@ export function ProjectOrbit({ colliderRef, entranceProgressRef, skullGeometry, 
               position={[Math.sin(angle) * radius, 0, Math.cos(angle) * radius]}
               rotation={[0, angle, 0]}
             >
-              <primitive object={material} attach="material" ref={index === 0 ? materialRef : undefined} />
+              <primitive object={cardMaterials[index]} attach="material" ref={index === 0 ? materialRef : undefined} />
             </mesh>
           );
         })}

@@ -17,6 +17,7 @@ import type { OutlinedText } from "@/lib/troikaText";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { caseStudyStage } from "@/lib/caseStudyStage";
 import { IS_REPEAT_VISIT } from "@/lib/visitSession";
+import { heroContent } from "@/data/content";
 
 interface TitleProps {
   children: React.ReactNode;
@@ -472,7 +473,7 @@ export function Title({
             letterSpacing={-0.02}
             position={[0, stackedFontSize * 0.1, 0]}
           >
-            Frontend Engineer
+            {heroContent.professions[0]}
             <meshBasicMaterial
               ref={stackedTopRef}
               transparent
@@ -491,7 +492,7 @@ export function Title({
             letterSpacing={-0.02}
             position={[0, -stackedFontSize * 0.1, 0]}
           >
-            Creative Technologist
+            {heroContent.professions[1]}
             <meshBasicMaterial
               ref={stackedBottomRef}
               transparent

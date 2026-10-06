@@ -20,6 +20,7 @@ import {
   type BioVariant,
 } from "@/data/content";
 import {
+  achievementsLinked,
   headingBlockHeight,
   calculateDetailsLayout,
 } from "@/lib/detailsLayout";
@@ -55,7 +56,6 @@ export function Details({
   const { setHoveredPreview, resetHoveredPreview } =
     useProjectHoverActions();
   const debug = useDebugSettings();
-  const anchorCfg = debug.modelAnchor;
   const {
     foldOffsetMult,
     bottomOffsetMult,
@@ -204,15 +204,7 @@ export function Details({
       stickHeading(skillsHeadingRef.current, "skills");
     }
 
-    const gapX = layout.modelGapCenterPx / size.width - 0.5;
-    const gapY =
-      (groupY + sectionTop - layout.modelAnchorY * pxTo3DHeight) /
-      viewport.height;
-
-    const fadeEnd =
-      titleSettledBottomY / viewport.height - anchorCfg.foldFadeClearance;
-    const foldFade =
-      1 - MathUtils.clamp((gapY - fadeEnd) / anchorCfg.foldFadeSpan + 1, 0, 1);
+    const companion = layoutMode === "narrow" ? CONFIG.model.COMPANION.NARROW : CONFIG.model.COMPANION.WIDE;
 
     // The model hangs a depth in front of the sheet, so a case study's camera
     // flies straight through it. It has to shrink faster than the list fades:
@@ -225,10 +217,10 @@ export function Details({
     );
 
     const anchor = modelAnchorRef.current;
-    anchor.xFraction = gapX;
-    anchor.yFraction = gapY;
+    anchor.xFraction = companion.X;
+    anchor.yFraction = companion.Y;
     anchor.scale =
-      CONFIG.model.DETAILS_POPUP_SCALE * foldFade * (1 - modelExit);
+      CONFIG.model.DETAILS_POPUP_SCALE * companion.SCALE * (1 - modelExit);
 
     if (layoutMode === "narrow" && inputMode === "coarse") {
       const projects = layout.sections.projects;
@@ -396,6 +388,7 @@ export function Details({
         headingGroupRef={achievementsHeadingRef}
         staggerStep={CONFIG.detailsTimings.BODY_STAGGER_STEP}
         {...shared}
+        bodyLineHeight={(achievementsLinked ? layout.projectLineHeight : layout.bodyLineHeight) * pxTo3DHeight}
       />
 
       <DetailsSection

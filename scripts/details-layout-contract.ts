@@ -46,13 +46,12 @@ export function checkDetailsLayout(fontsReady = false) {
       assert(layout.overflow >= 0 && Number.isFinite(layout.overflow), "Overflow is finite and nonnegative");
       assert(layout.sectionLines.projects.length === projectsData.length, "All project rows are present");
       for (const achievement of achievementsData) {
+        if (!achievement.link) continue;
         const rows = layout.achievementRows.filter(row => row.href === achievement.link);
         assert(rows.map(row => row.text).join(" ") === achievement.name, "Wrapped achievement links retain the complete copy");
       }
       assert(layout.achievementRows.map(row => row.text).join("\n") === layout.sectionLines.achievements.join("\n"), "Achievement presentation covers every measured line");
       if (layout.layoutMode === "narrow") {
-        assert(layout.modelAnchorY - layout.modelInterludeHeight / 2 > layout.sections.skills.bottomY, "Model interlude clears skills");
-        assert(layout.modelAnchorY + layout.modelInterludeHeight / 2 < layout.sections.projects.headingY, "Model interlude clears projects");
         assert(layout.sections.bio.bodyY > layout.bioImageY + layout.bioImageHeight, "Bio copy clears the stacked image");
       }
       scenarios++;

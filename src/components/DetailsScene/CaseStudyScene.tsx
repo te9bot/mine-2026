@@ -400,7 +400,7 @@ export function CaseStudyScene() {
                 </>
             )}
         </group>
-        {narrowStudy && study && (
+        {narrowStudy && study?.link && (
             <CaseStudyExternalLink
                 href={study.link}
                 positionRef={externalPositionRef}

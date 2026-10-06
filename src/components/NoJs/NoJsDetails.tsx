@@ -42,14 +42,18 @@ export function NoJsDetails() {
                             className="text-left text-lg leading-relaxed font-karla text-(--text-body)"
                         >
                             -{" "}
-                            <a
-                                href={item.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="underline decoration-(--text-hint) underline-offset-4 transition-colors hover:text-(--text-primary)"
-                            >
-                                {item.name}
-                            </a>
+                            {item.link ? (
+                                <a
+                                    href={item.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline decoration-(--text-hint) underline-offset-4 transition-colors hover:text-(--text-primary)"
+                                >
+                                    {item.name}
+                                </a>
+                            ) : (
+                                item.name
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -66,14 +70,18 @@ export function NoJsDetails() {
                             className="text-left text-lg leading-relaxed font-karla text-(--text-body)"
                         >
                             -{" "}
-                            <a
-                                href={achievement.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="underline decoration-(--text-hint) underline-offset-4 transition-colors hover:text-(--text-primary)"
-                            >
-                                {achievement.name}
-                            </a>
+                            {achievement.link ? (
+                                <a
+                                    href={achievement.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline decoration-(--text-hint) underline-offset-4 transition-colors hover:text-(--text-primary)"
+                                >
+                                    {achievement.name}
+                                </a>
+                            ) : (
+                                achievement.name
+                            )}
                         </li>
                     ))}
                 </ul>

@@ -82,7 +82,7 @@ The `<Html>` DOM mirrors are the reliable oracle: they are transform-positioned 
 - **In a sandboxed browser, `requestAnimationFrame` is throttled while the pane is hidden.** Consequences: `window.scrollTo` does **not** drive ScrollTrigger or Lenis, so element positions read straight after it are stale. Forcing a frame with a screenshot and *then* reading rects gives correct values.
 - **Screenshots there can be a blank light plane** regardless of what the canvas holds — confirmed by temporarily colouring a mesh red and getting the same blank image. Do not conclude "the scene is broken" from a screenshot alone.
 - **The intro loader can hang on a warm asset cache** in sandboxed browsers (`useProgress` never reaches 100, and `page.tsx` keeps `overflow: hidden`, so the page looks dead). This is environment-specific, **not a bug to fix**. Bypass it by flipping both `useState(false)` to `useState(true)` at the top of `page.tsx`, and always revert before committing.
-- **`npm run lint` is the meaningful lint command**. The nested project copies under `.claude/worktrees/` are excluded from ESLint and Git.
+- **`npm run lint` is the meaningful lint command**.
 
 ## Routes & debug mode
 

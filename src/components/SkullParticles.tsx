@@ -10,6 +10,7 @@ import { createSkullParticles } from "@/lib/skullParticles";
 import { createSkullFragments } from "@/lib/skullFragments";
 import { skullInteractionTransform } from "@/lib/skullInteraction";
 import { SkullGlass } from "@/components/SkullGlass";
+import { PikachuFragments } from "@/components/PikachuFragments";
 import { orbitCollisionTransform, type ProjectOrbitCollider } from "@/lib/projectOrbitCollision";
 import { heroAssemblyAt } from "@/lib/heroAssembly";
 
@@ -20,7 +21,9 @@ export function SkullParticles({
   fragments = false,
   orbitCollider,
   entranceRef,
+  furBaldSpots,
 }: {
+  furBaldSpots?: THREE.Vector4[];
   entranceRef: RefObject<THREE.Group | null>;
   orbitCollider: RefObject<ProjectOrbitCollider>;
   fragments?: boolean;
@@ -197,7 +200,17 @@ export function SkullParticles({
 
   return (
     <group ref={group}>
-      {fragmentGeometry && (
+      {fragmentGeometry && furBaldSpots && (
+        <PikachuFragments
+          geometry={fragmentGeometry.geometry}
+          fragments={fragmentUniforms}
+          baldSpots={furBaldSpots}
+          orbitCollider={orbitCollider}
+          lowQuality={lowQuality}
+          clippingPlanes={clippingPlanes}
+        />
+      )}
+      {fragmentGeometry && !furBaldSpots && (
         <SkullGlass
           geometry={fragmentGeometry.geometry}
           fragments={fragmentUniforms}

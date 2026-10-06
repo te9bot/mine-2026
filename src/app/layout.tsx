@@ -4,8 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 
 export const metadata: Metadata = {
-    title: "Folio 2026",
-    description: "My personal portfolio",
+    title: "Talha Zobayed Tanim — Creative Designer & Visualizer",
+    description: "Portfolio of Talha Zobayed Tanim, a creative designer and visualizer from Dhaka specialized in 3D design and visual storytelling.",
 };
 
 const karla = localFont({

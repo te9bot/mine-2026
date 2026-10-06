@@ -12,17 +12,8 @@ const timeFormatter = new Intl.DateTimeFormat("en-GB", {
   second: "2-digit",
 });
 
-const offsetFormatter = new Intl.DateTimeFormat("en-US", {
-  timeZone: headerContent.timeZone,
-  timeZoneName: "shortOffset",
-});
-
 function readClock(now: Date) {
-  const offset = offsetFormatter
-    .formatToParts(now)
-    .find((part) => part.type === "timeZoneName")?.value;
-
-  return `${timeFormatter.format(now)} ${offset?.includes("+2") ? "CEST" : "CET"}`;
+  return `${timeFormatter.format(now)} ${headerContent.timeZoneLabel}`;
 }
 
 interface ClockProps {

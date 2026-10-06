@@ -7,58 +7,41 @@ export const fallbackContent = {
 } as const;
 
 export const heroContent = {
-    title: "Natan Mokrzycki",
+    title: "Talha Zobayed",
     subtitle:
-        "Bridging the gap between performance and high-end visual aesthetics.",
-    professions: ["Frontend Engineer", "Creative Technologist"],
+        "Specialized in 3D design and visual storytelling.",
+    professions: ["Creative Designer", "3D Visualizer"],
     scrollHint: "Scroll to explore CV",
 } as const;
 
 export const headerContent = {
-    coordinates: "51.10°N 17.03°E",
+    coordinates: "23.81°N 90.41°E",
     availability: "Available for work",
     themeOptions: ["Light", "Dark"] as const,
     themeSeparator: "/",
-    timeZone: "Europe/Warsaw",
+    timeZone: "Asia/Dhaka",
+    timeZoneLabel: "BST",
     contact: {
         label: "Contact",
-        href: "mailto:hello@natanmokrzycki.com",
+        href: "mailto:talhazobayed7@gmail.com",
     },
 } as const;
 
 export type ThemeOption = (typeof headerContent.themeOptions)[number];
 
 export const experienceData = [
-    {
-        company: "micro1",
-        position: "Senior AI Trainer (Contractor)",
-        duration: "2026 - Present",
-    },
-    {
-        company: "Nowa Łukasz Walter",
-        position: "Fullstack Engineer",
-        duration: "2026 - Present",
-    },
-    {
-        company: "Nowa Łukasz Walter",
-        position: "Frontend Engineer",
-        duration: "2024 - 2026",
-    },
-    {
-        company: "Galactic Reborn",
-        position: "Co-Founder",
-        duration: "2023 - 2024",
-    },
-    {
-        company: "Nowa Łukasz Walter",
-        position: "Frontend Developer",
-        duration: "2020 - 2024",
-    },
-    {
-        company: "Nowa Łukasz Walter",
-        position: "Ecommerce Specialist",
-        duration: "2018 - 2020",
-    },
+    { company: "10 Minute School", position: "Content Executive", duration: "2022 - 2023" },
+    { company: "Ostad", position: "Creative Designer", duration: "2023 - 2024" },
+    { company: "BRAC", position: "Graphics Design Instructor", duration: "2024 - 2025" },
+    { company: "AgriSync.AI", position: "Lead Developer & Strategy Member", duration: "Recent" },
+    { company: "Volunteer for Bangladesh (VBD)", position: "Volunteer & Project Lead", duration: "Current" },
+    { company: "Quantum School Bangladesh", position: "Quantum Computing Researcher", duration: "Recent" },
+    { company: "InnovX", position: "Co-Author & Researcher", duration: "Recent" },
+    { company: "Amazon MEX3 Fulfillment Center", position: "Ops Strategy & Analytics Intern", duration: "Recent" },
+    { company: "Platformia Times", position: "Contributing Writer", duration: "Current" },
+    { company: "eLaundry Bangladesh", position: "Web Designer", duration: "Recent" },
+    { company: "RoktoSondhanBD", position: "Developer & Operations Member", duration: "Recent" },
+    { company: "TEX Esports", position: "In-Game Leader & Strategist", duration: "Recent" },
 ] as const;
 // Every project owns a folder under /media/projects/<slug>/. `preview` is the
 // still the plate shows the moment a row is hovered, authored at 1280x800 to
@@ -69,129 +52,145 @@ export const experienceData = [
 // `slug` and everything under it belong to the case study the row opens: the
 // slug is what the URL is rewritten to, and `title` drops the " - Github" the
 // row carries for the link, which has no business being the study's headline.
-export const projectsData = [
+const projectsList = [
     {
-        name: "Folio 2026 - Github",
-        link: "https://github.com/iTzRitual/folio-2026",
-        preview: "/media/projects/folio-2026/teaser.svg",
-        slug: "folio-2026",
-        title: "Folio 2026",
-        role: "Design & Engineering",
-        year: "2026",
-        stack: "Next.js · React Three Fiber · GSAP",
-        lede: "A portfolio that looks like a flat website and is not one.",
-        body: [
-            "Every line of the desktop interface is drawn inside a WebGL canvas. The DOM behind it exists only as a scroll spacer and as the accessible twin of the text you are reading, kept in sync to the pixel so selection, search and screen readers still work.",
-            "The wager was that a site can be built out of shaders without announcing it. No entrance flourish, no parallax for its own sake — the surface only starts behaving like an object once you touch it.",
-        ],
-    },
-    {
-        name: "Controller Configurator - Github",
-        link: "https://github.com/iTzRitual/r3f-controller-configurator-2025",
-        preview: "/media/projects/controller-configurator/teaser.webp",
-        loop: "/media/projects/controller-configurator/teaser.mp4",
-        slug: "controller-configurator",
-        title: "Controller Configurator",
-        role: "Solo build",
+        name: "Lakeside Cabin at Sunrise - 3D",
+        preview: "/media/projects/lakeside-cabin/teaser.webp",
+        slug: "lakeside-cabin",
+        title: "Lakeside Cabin at Sunrise",
+        role: "Cinematic 3D Environment",
         year: "2025",
-        stack: "React Three Fiber · Draco · Zustand",
-        lede: "A real-time controller configurator that renders like a product shot.",
+        stack: "Blender · Substance Painter",
+        lede: "Tranquil lakeside setting with soft sunlight and gentle fog.",
         body: [
-            "Twelve interchangeable parts, six finishes and a live price, all resolved against one Draco-compressed mesh. Material swaps happen on the GPU rather than by re-uploading geometry, which is what keeps the configurator responsive on a laptop.",
-            "The hard part was never the 3D. It was making a spec sheet feel like a spec sheet while the thing it describes is spinning next to it, and keeping the two in agreement at every step.",
+            "A cinematic environment built around one quiet moment: the first light of the day settling over still water, with fog softening everything beyond the cabin.",
+            "Part of an ongoing series of more than 55 3D game environments and assets created since 2023.",
         ],
     },
     {
-        name: "Commercial Portfolio - Github",
-        link: "https://github.com/iTzRitual/commercial-portfolio",
-        preview: "/media/projects/commercial-portfolio/teaser.svg",
-        slug: "commercial-portfolio",
-        title: "Commercial Portfolio",
-        role: "Frontend Engineer",
-        year: "2024 — 2026",
-        stack: "React · TypeScript · Liquid",
-        lede: "Commercial work, stripped down to what survived contact with clients.",
-        body: [
-            "Storefronts, configurators and campaign pages built inside real deadlines and real CMS constraints. The pieces collected here are the ones where the brief left enough room to design the motion rather than inherit it.",
-            "Shared across all of them: a component layer that outlived the campaign it was written for.",
-        ],
-    },
-    {
-        name: "Realtime Fluid Simulation - Github",
-        link: "https://github.com/iTzRitual",
-        preview: "/media/projects/fluid-simulation/teaser.svg",
-        slug: "fluid-simulation",
-        title: "Realtime Fluid Simulation",
-        role: "Research build",
+        name: "Forest Water Surface Study - 3D",
+        preview: "/media/projects/forest-water-surface/teaser.webp",
+        slug: "forest-water-surface",
+        title: "Forest Water Surface Study",
+        role: "Environmental Realism",
         year: "2025",
-        stack: "WebGL2 · GLSL · Float textures",
-        lede: "Navier–Stokes in a fragment shader, at sixty frames per second.",
+        stack: "Blender · Substance Painter",
+        lede: "Realistic shallow-water simulation with dynamic ripples and natural reflections.",
         body: [
-            "A semi-Lagrangian advection step, a Jacobi pressure solve and a vorticity confinement pass, all running over ping-ponged float textures. The simulation grid is decoupled from the display resolution, so the fluid stays cheap while the render stays sharp.",
-            "Built to understand the solver, not to ship it. The interesting failure was discovering how much of the perceived quality comes from the dye advection rather than the velocity field.",
+            "A study of shallow forest water featuring dynamic ripples, natural reflections, and dense submerged vegetation.",
+            "The focus is material accuracy and environmental detail, getting water to read as water at every depth.",
         ],
     },
     {
-        name: "WebGPU Particle System - Github",
-        link: "https://github.com/iTzRitual",
-        preview: "/media/projects/webgpu-particles/teaser.svg",
-        slug: "webgpu-particles",
-        title: "WebGPU Particle System",
-        role: "Research build",
-        year: "2026",
-        stack: "WebGPU · WGSL · Compute shaders",
-        lede: "A million particles, sorted and simulated without touching the CPU.",
-        body: [
-            "Position and velocity live in storage buffers that only the compute pass writes. A spatial hash rebuilt every frame turns neighbour lookup from a quadratic problem into a bounded one, which is what makes collisions affordable at this count.",
-            "WebGPU's explicitness is the point: the bind group layout forces you to state what the GPU is allowed to see, and most of the bugs disappeared with it.",
-        ],
-    },
-    {
-        name: "Procedural Terrain Generator - Github",
-        link: "https://github.com/iTzRitual",
-        preview: "/media/projects/procedural-terrain/teaser.svg",
-        slug: "procedural-terrain",
-        title: "Procedural Terrain Generator",
-        role: "Solo build",
+        name: "Forest Clearing at Morning Light - 3D",
+        preview: "/media/projects/forest-clearing/teaser.webp",
+        slug: "forest-clearing",
+        title: "Forest Clearing at Morning Light",
+        role: "3D Nature Simulation",
         year: "2025",
-        stack: "Three.js · GLSL · Web Workers",
-        lede: "Infinite terrain, generated as you fly over it.",
+        stack: "Blender · Substance Painter",
+        lede: "A quiet woodland scene where early sunlight filters through tall pines.",
         body: [
-            "Chunks are meshed off the main thread from layered simplex noise, streamed in around the camera and retired behind it. Level of detail is chosen per chunk against screen-space error, so the horizon costs almost nothing and the ground under you costs what it should.",
-            "Erosion came last and changed everything — a landscape reads as a place only once water has been over it.",
+            "Lush green undergrowth covers the forest floor, and an old wooden barrel sits partially hidden among the plants, suggesting a forgotten human presence.",
+            "The atmosphere feels calm and untouched, with gentle light and subtle shadows creating a peaceful, almost cinematic mood.",
         ],
     },
     {
-        name: "Shader Playground - Github",
-        link: "https://github.com/iTzRitual",
-        preview: "/media/projects/shader-playground/teaser.svg",
-        slug: "shader-playground",
-        title: "Shader Playground",
-        role: "Solo build",
-        year: "2024",
-        stack: "GLSL · CodeMirror · Vite",
-        lede: "A shader editor that recompiles between keystrokes.",
+        name: "Snowy Night House - 3D",
+        preview: "/media/projects/snowy-night-house/teaser.webp",
+        slug: "snowy-night-house",
+        title: "Snowy Night House",
+        role: "Stylized 3D Illustration",
+        year: "2025",
+        stack: "Blender",
+        lede: "Winter night scene with warm interior lighting.",
         body: [
-            "Compilation is debounced against the parse, not the keypress, and the previous program stays bound until the new one links cleanly — so a syntax error mid-word never blanks the canvas you are working against.",
-            "Uniforms are discovered from the source and given controls automatically. Writing a slider by hand is the fastest way to stop experimenting.",
+            "A stylized winter night where cold blue snow meets the warm glow spilling from the windows.",
         ],
     },
     {
-        name: "Motion Design System - Github",
-        link: "https://github.com/iTzRitual",
-        preview: "/media/projects/motion-design-system/teaser.svg",
-        slug: "motion-design-system",
-        title: "Motion Design System",
-        role: "Design Engineering",
-        year: "2026",
-        stack: "React · CSS custom properties · Framer Motion",
-        lede: "One motion language, expressed as tokens instead of opinions.",
+        name: "Countryside Cottage (Autumn) - 3D",
+        preview: "/media/projects/countryside-cottage/teaser.webp",
+        slug: "countryside-cottage",
+        title: "Countryside Cottage (Autumn)",
+        role: "Realistic 3D Environment",
+        year: "2025",
+        stack: "Blender · Substance Painter",
+        lede: "Rustic countryside house with detailed autumn textures.",
         body: [
-            "Durations, easings and travel distances live as named tokens, so a card, a sheet and a toast can share a personality without sharing an implementation. Reduced motion is a branch in the token layer rather than a special case in every component.",
-            "The system's real output is not the components. It is that two engineers reaching for an entrance animation now reach for the same one.",
+            "A realistic rural cottage dressed in autumn, built around detailed, weathered textures and seasonal colour.",
+        ],
+    },
+    {
+        name: "Planetary Space Scene - 3D",
+        preview: "/media/projects/planetary-space-scene/teaser.webp",
+        slug: "planetary-space-scene",
+        title: "Planetary Space Scene",
+        role: "Sci-Fi 3D Environment",
+        year: "2025",
+        stack: "Blender",
+        lede: "Cinematic depiction of a distant planet with atmospheric glow.",
+        body: [
+            "A sci-fi environment study of a distant planet, lit to emphasise its atmospheric glow against deep space.",
+        ],
+    },
+    {
+        name: "Photographic Collection - Gallery",
+        preview: "/media/projects/photographic-collection/teaser.webp",
+        slug: "photographic-collection",
+        title: "Photographic Collection",
+        role: "Photography",
+        year: "2025",
+        stack: "Lightroom · Photoshop",
+        lede: "Eight frames on nature, industry, labour and solitude.",
+        body: [
+            "Quiet Bloom, Power at Dawn, Submerged Patterns, Through the Green Corridor, Watcher in the Mist, Lines of Labor, Industrial Silence and The Long Walk.",
+            "From white water lilies on still water to a lone figure walking into fog, the collection explores calm persistence, scale, rhythm and forward motion, where human systems meet the landscape around them.",
+        ],
+    },
+    {
+        name: "Video Showcase - YouTube",
+        link: "https://www.youtube.com/watch?v=-7zyak9mfQg",
+        preview: "/media/projects/video-showcase/teaser.svg",
+        slug: "video-showcase",
+        title: "Video Showcase",
+        role: "Motion & 3D",
+        year: "2025",
+        stack: "Blender · After Effects · Premiere Pro",
+        lede: "My work in motion: esports edits, 3D animation and motion graphics.",
+        body: [
+            "An esports frags compilation, a 3D work showcase, a 3D animation showcase and a look at modeling in Blender.",
+        ],
+    },
+    {
+        name: "Unimart Kids Carnival Campaign - Client",
+        preview: "/media/projects/unimart-kids-carnival/teaser.svg",
+        slug: "unimart-kids-carnival",
+        title: "Unimart Kids Carnival Campaign",
+        role: "Campaign Design",
+        year: "2025",
+        stack: "Photoshop · Illustrator",
+        lede: "Project was about precision and information.",
+        body: [
+            "Campaign visuals for an international client, where precision and clarity of information led every design decision.",
+        ],
+    },
+    {
+        name: "Premia Education Logo Design - Client",
+        preview: "/media/projects/premia-education/teaser.svg",
+        slug: "premia-education",
+        title: "Premia Education Logo Design",
+        role: "Brand Identity",
+        year: "2025",
+        stack: "Illustrator",
+        lede: "Creating a memorable brand identity for educational excellence.",
+        body: [
+            "A logo and identity built to feel trustworthy and memorable for an education brand.",
         ],
     },
 ] as const;
+
+export const projectsData: readonly (Omit<(typeof projectsList)[number], "link"> & { link?: string; loop?: string })[] = projectsList;
 
 export type CaseStudy = (typeof projectsData)[number];
 
@@ -202,91 +201,62 @@ export const PROJECT_PREVIEW_SOURCES = projectsData.map(
 export const PROJECT_LOOP_SOURCES = projectsData.reduce<
     Record<string, string | undefined>
 >((sources, project) => {
-    if ("loop" in project) sources[project.preview] = project.loop;
+    if (project.loop) sources[project.preview] = project.loop;
     return sources;
 }, {});
 export const educationData = [
     {
-        institution: "DSW University of Lower Silesia",
-        degree: "Master's degree",
-        field: "Creative Media: 3D Animation",
+        institution: "Police Lines School and College",
+        degree: "HSC 2024",
+        field: "Higher Secondary Certificate, GPA 4.83 / 5.00",
     },
     {
-        institution: "WSB Merito University Wroclaw",
-        degree: "Bachelor of Engineering",
-        field: "Computer Science",
+        institution: "Bheramara High School",
+        degree: "SSC 2021",
+        field: "Secondary School Certificate, GPA 5.00 / 5.00",
     },
 ] as const;
 
-export const achievementsData = [
-    {
-        name: "micro1 Frontier Engineering Challenge 2026 / Recognized Submission — Top 50",
-        link: "https://github.com/iTzRitual/blackhole-micro1-hackereath",
-    },
-] as const;
+export const achievementsData: readonly { name: string; link?: string }[] = [
+    { name: "2025 / Qiskit Fall Fest Mentor — IBM Quantum" },
+    { name: "2023 / Gold Medalist, Physics Olympiad — Ranked #1 of 500+" },
+    { name: "2023 / Queen's Commonwealth Essay Gold Award — 19,000+ entries" },
+    { name: "2023 / Duke of Edinburgh Silver Award" },
+    { name: "2024 / Highest Grade in Higher Mathematics" },
+    { name: "2023 / PUBG Mobile Champion — NBL Super League, $2,000" },
+    { name: "2023 - Present / 55+ 3D Game Environments" },
+];
 
 export const coursesData = [
-    {
-        title: "aiforui.dev - AI for Designers and Engineers",
-        issuer: "Emil Kowalski",
-        date: "In progress",
-    },
-    {
-        title: "WebGPU & TSL",
-        description: "Real-time shader workflows",
-        issuer: "Bruno Simon",
-        date: "In progress",
-    },
-    {
-        title: "Three.js Journey – Creative 3D Web Development",
-        issuer: "Bruno Simon",
-        date: "In progress",
-    },
-    {
-        title: "Animations on the Web - Advanced Interactions",
-        issuer: "Emil Kowalski",
-        date: "2026",
-    },
-    {
-        title: "Enterprise React & Architecture",
-        issuer: "zrozumiecreact.pl",
-        date: "2026",
-    },
-    {
-        title: "Front-End & Business – Corporate Workflows",
-        issuer: "Accenture",
-        date: "2024",
-    },
-    {
-        title: "Web Penetration Testing – Security Audit & Pentesting",
-        issuer: "EY",
-        date: "2023",
-    },
+    { title: "Esports Club Founder", issuer: "College Esports Club", date: "2023" },
+    { title: "Art Club President", issuer: "College Art Club", date: "2024" },
+    { title: "Debate Club Secretary", issuer: "College Debate Club", date: "2024" },
+    { title: "Health Club Founder", issuer: "College Health Club", date: "2023" },
 ] as const;
 
 export const bioVariants = {
     narrative: [
-        "My tech journey started early—entering the e-commerce space at 17, which quickly evolved into a passion for frontend engineering, UI design in Figma, and fullstack architecture. Driven by a long-standing fascination with Awwwards-level interactive design, I shifted my focus toward creative technology, blending performance with rich visual aesthetics.",
-        "My creative eye was originally shaped outside of web dev through video editing—specifically crafting gameplay montages (huge Gears of War fan). When I'm not pushing pixels or shaders, you'll find me skateboarding, hitting the slopes on a snowboard, or gaming.",
+        "I'm a creative designer and visualizer from Dhaka, Bangladesh, specialized in 3D design and visual storytelling. I've built content for 10 Minute School, led design at Ostad, taught graphic design at BRAC, and created more than 55 3D game environments and assets since 2023.",
+        "Outside the studio I work across data analytics, research and competitive esports, from quantum error correction experiments and an AI/ML water safety study to leading TEX Esports to a top-6 PMCO finish. I design and code beautifully simple things, and I love what I do.",
     ],
     manifesto: [
-        "I build interfaces that behave like objects, not documents.",
-        "Ten years between commercial ecommerce and real-time 3D.",
-        "I care about the frame budget as much as the typography.",
-        "Currently exploring WebGPU and procedural geometry.",
+        "I design and code beautifully simple things.",
+        "3D design and visual storytelling, end to end.",
+        "Research, analytics and esports sharpen how I design.",
+        "Currently available for freelance and full-time work.",
     ],
     facts: [
-        "Based in / Wrocław, Poland",
-        "Focus / Real-time 3D, WebGL, creative frontend",
-        "Toolkit / React, Three.js, GSAP, Blender",
+        "Based in / Dhaka, Bangladesh",
+        "Focus / 3D design, visual design, motion graphics",
+        "Toolkit / Blender, Substance Painter, Unreal Engine, Adobe CC",
         "Open to / Freelance and full-time roles",
-        "Contact / hello@natanmokrzycki.com",
+        "Contact / talhazobayed7@gmail.com",
     ],
 } as const;
 
 export const bioImage = {
-    src: "/images/natan_bio.JPG",
-    alt: "Natan Mokrzycki standing on a beach at night, city lights behind him",
+    src: "/images/talha_bio.jpg",
+    alt: "Talha Zobayed Tanim smiling with arms crossed in a striped T-shirt against a blue backdrop",
 } as const;
 
 export type BioVariant = keyof typeof bioVariants;
@@ -302,16 +272,15 @@ export const projectLinkContent = {
 
 export const skillsData = [
     "Visual Design",
-    "UI/UX Design",
-    "React",
-    "React Native",
-    "Three.js",
-    "React Three Fiber",
-    "GSAP",
+    "3D Design & Modeling",
+    "Motion Graphics",
     "Blender",
-    "JavaScript",
-    "TypeScript",
-    "Liquid",
+    "Substance Painter",
+    "Unreal Engine",
+    "Photoshop",
+    "Illustrator",
     "Figma",
+    "Premiere Pro",
     "After Effects",
+    "Lightroom",
 ] as const;

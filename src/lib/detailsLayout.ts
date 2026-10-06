@@ -52,7 +52,7 @@ export interface DetailsLayout {
     skillsColumns: number;
     skillsColumnWidth: number;
     sectionLines: Record<DetailsListSectionKey, string[]>;
-    achievementRows: { text: string; href: string }[];
+    achievementRows: { text: string; href?: string }[];
     sections: Record<DetailsSectionKey, DetailsSectionOffsets>;
     contentHeight: number;
     usableHeight: number;
@@ -65,6 +65,8 @@ interface DetailsLayoutInput {
     bioVariant?: BioVariant;
     fontsReady?: boolean;
 }
+
+export const achievementsLinked = achievementsData.some((achievement) => achievement.link);
 
 export function headingLines(heading: string): string[] {
     return heading.split("\n");
@@ -184,7 +186,7 @@ function calculateWideDetailsLayout({
     const lineHeights: Record<DetailsListSectionKey, number> = {
         experience: bodyLineHeight,
         projects: projectLineHeight,
-        achievements: bodyLineHeight,
+        achievements: achievementsLinked ? projectLineHeight : bodyLineHeight,
         education: bodyLineHeight,
         courses: bodyLineHeight,
         skills: bodyLineHeight,
@@ -396,21 +398,11 @@ function calculateNarrowDetailsLayout({
     place("experience", sectionLines.experience.length, bodyLineHeight);
     place("skills", Math.ceil(skillsData.length / skillsColumns), bodyLineHeight);
 
-    const modelInterludeHeight = Math.min(
-        Math.max(
-            viewportHeight *
-                (compactHeight
-                    ? L.NARROW_MODEL_INTERLUDE_COMPACT_MULT
-                    : L.NARROW_MODEL_INTERLUDE_MULT),
-            L.NARROW_MODEL_INTERLUDE_MIN_PX,
-        ),
-        L.NARROW_MODEL_INTERLUDE_MAX_PX,
-    );
-    const modelAnchorY = cursor + modelInterludeHeight / 2;
-    cursor += modelInterludeHeight + sectionGap;
+    const modelInterludeHeight = 0;
+    const modelAnchorY = cursor;
 
     place("projects", projectsData.length, projectLineHeight);
-    place("achievements", sectionLines.achievements.length, bodyLineHeight);
+    place("achievements", sectionLines.achievements.length, achievementsLinked ? projectLineHeight : bodyLineHeight);
     place("education", sectionLines.education.length, bodyLineHeight);
     place("courses", sectionLines.courses.length, bodyLineHeight);
 

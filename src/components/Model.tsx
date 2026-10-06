@@ -15,6 +15,7 @@ import { useSceneCapabilities } from "@/context/SceneCapabilitiesContext";
 import { ProjectOrbit } from "@/components/ProjectOrbit";
 import { SkullParticles } from "@/components/SkullParticles";
 import { SkullGlass } from "@/components/SkullGlass";
+import { furBaldSpots, pikachuSource } from "@/lib/pikachuFur";
 import type { ProjectOrbitCollider } from "@/lib/projectOrbitCollision";
 import { heroAssemblyAt } from "@/lib/heroAssembly";
 import { fitHeroModelSlot, heroModelSlot } from "@/lib/heroModelPlacement";
@@ -37,11 +38,11 @@ export default function Model({ isDebug }: { isDebug: boolean }) {
   const skullSurfaceRef = useRef<THREE.Group>(null);
   const orbitCollider = useRef<ProjectOrbitCollider>({ object: null, radius: 1, active: false });
   const entranceProgressRef = useRef({ progress: 0, orbitElapsed: 0 });
-  const { nodes } = useGLTF("/glbs/czaszka2draco.glb");
-  const surface = useMemo(() => {
-    const source = nodes.Sphere;
-    return source instanceof THREE.Mesh ? source.geometry.clone().center() : null;
-  }, [nodes]);
+  const { scene } = useGLTF("/glbs/pikachu.glb");
+  const source = useMemo(() => pikachuSource(scene), [scene]);
+  const baldSpots = useMemo(() => furBaldSpots(scene), [scene]);
+  const surface = useMemo(() => source.geometry.clone().center(), [source]);
+  useEffect(() => () => source.geometry.dispose(), [source]);
   useEffect(() => () => surface?.dispose(), [surface]);
 
   const heroLayout = useHeroLayout();
@@ -105,7 +106,7 @@ export default function Model({ isDebug }: { isDebug: boolean }) {
 
   const responsiveScale = baseResponsiveScale * debug.particles.scale;
 
-  const skullRotation = debug.skullRotation;
+  const skullRotation = CONFIG.model.PIKACHU_ROTATION;
   const modelExtent = useMemo(() => {
     if (!surface) return { height: 0, scatter: 0 };
     const rotation = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(skullRotation.x, skullRotation.y, skullRotation.z));
@@ -272,9 +273,10 @@ export default function Model({ isDebug }: { isDebug: boolean }) {
                     entranceRef={animGroupRef}
                     orbitCollider={orbitCollider}
                     fragments={debug.skullAppearance.mode === "fragments"}
-                    source={nodes.Sphere}
+                    source={source}
                     lowQuality={lowQuality}
                     clippingPlanes={FOLD_CLIP_PLANES}
+                    furBaldSpots={baldSpots}
                   />
                 )}
               </group>

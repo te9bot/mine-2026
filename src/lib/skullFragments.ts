@@ -8,6 +8,8 @@ function cellSeed(x: number, y: number, z: number, channel: number) {
   return ((seed ^ (seed >>> 13)) >>> 0) / 4294967296;
 }
 
+const FRAGMENT_CARRIED_ATTRIBUTES = ["color", "furLength", "gloss"];
+
 export function createSkullFragments(source: THREE.BufferGeometry, cells: number) {
   const expanded = source.index ? source.toNonIndexed() : source.clone();
   expanded.center();
@@ -17,6 +19,10 @@ export function createSkullFragments(source: THREE.BufferGeometry, cells: number
   const pitch = Math.max(size.x, size.y, size.z) / cells;
   const positions = expanded.attributes.position;
   const normals = expanded.attributes.normal;
+  const carried = FRAGMENT_CARRIED_ATTRIBUTES.flatMap((name) => {
+    const attribute = expanded.getAttribute(name);
+    return attribute ? [{ name, attribute, values: [] as number[] }] : [];
+  });
   const groups = new Map<string, { triangles: number[]; center: THREE.Vector3; area: number }>();
   const a = new THREE.Vector3();
   const b = new THREE.Vector3();
@@ -104,6 +110,9 @@ export function createSkullFragments(source: THREE.BufferGeometry, cells: number
       else normal.fromBufferAttribute(normals, index).multiplyScalar(inside ? -1 : 1);
       shading.push(normal.x, normal.y, normal.z);
       particleUvs.push(u, v);
+      for (const { attribute, values } of carried) {
+        for (let component = 0; component < attribute.itemSize; component++) values.push(attribute.getComponent(index, component));
+      }
     };
     for (const triangle of group.triangles) {
       for (const offset of [0, 1, 2]) append(triangle + offset, false);
@@ -138,6 +147,7 @@ export function createSkullFragments(source: THREE.BufferGeometry, cells: number
   geometry.setAttribute("fragmentInterior", new THREE.Float32BufferAttribute(interiors, 1));
   geometry.setAttribute("normal", new THREE.Float32BufferAttribute(shading, 3));
   geometry.setAttribute("particleUv", new THREE.Float32BufferAttribute(particleUvs, 2));
+  for (const { name, attribute, values } of carried) geometry.setAttribute(name, new THREE.Float32BufferAttribute(values, attribute.itemSize));
   geometry.computeBoundingSphere();
   expanded.dispose();
   return { geometry, samples, count };

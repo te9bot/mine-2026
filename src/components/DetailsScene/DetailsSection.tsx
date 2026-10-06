@@ -98,9 +98,10 @@ export const DetailsSection = memo(function DetailsSection({
                     bodyY - row * bodyLineHeight,
                     0,
                 ];
-                const role: ThemeRole = item.href ? "bg" : "textBody";
-                const blockRole: ThemeRole = item.href
-                    ? "textPrimary"
+                const linked = item.href !== undefined || item.caseStudyIndex !== undefined;
+                const role: ThemeRole = linked ? "accentText" : "textBody";
+                const blockRole: ThemeRole = linked
+                    ? "accent"
                     : "textBody";
                 const shared = {
                     text: item.text,
@@ -120,7 +121,7 @@ export const DetailsSection = memo(function DetailsSection({
                     letterSpacing: CONFIG.detailsLayout.LETTER_SPACING,
                 };
 
-                return item.href ? (
+                return linked ? (
                     <DetailsLink
                         key={`${heading}-${index}`}
                         href={item.href}

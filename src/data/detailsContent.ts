@@ -64,7 +64,7 @@ export const DETAILS_SECTION_CONTENT = {
     narrowLines: educationLines,
   },
   courses: {
-    heading: "Courses\n& Certifications",
+    heading: "Leadership\n& Clubs",
     wideLines: courseLines,
     narrowLines: courseLines,
   },

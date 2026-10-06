@@ -1,4 +1,4 @@
-# Folio 2026
+# Talha Zobayed — Portfolio 2026
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black?style=flat&logo=next.js)
 ![React](https://img.shields.io/badge/React-19.2.3-blue?style=flat&logo=react)
@@ -12,7 +12,7 @@
 ![Lenis](https://img.shields.io/badge/Lenis-1.3.18-black?style=flat)
 ![Leva](https://img.shields.io/badge/Leva-0.10.1-orange?style=flat)
 
-My interactive portfolio for 2026. The project breaks standard web development conventions by shifting the UI rendering weight from the classic DOM tree to the WebGL environment, while intentionally maintaining the appearance of a "regular" website.
+The interactive portfolio of Talha Zobayed Tanim, creative designer and 3D visualizer, featuring a fur-shaded 3D Pikachu modelled in Blender. The project breaks standard web development conventions by shifting the UI rendering weight from the classic DOM tree to the WebGL environment, while intentionally maintaining the appearance of a "regular" website.
 
 **[Work in Progress]**
 
@@ -97,10 +97,10 @@ Creating a DOM-like interface inside a Canvas required an unconventional approac
 
 ```bash
 # Clone the repository
-git clone https://github.com/iTzRitual/folio-2026.git
+git clone https://github.com/te9bot/mine-2026.git
 
 # Navigate to the project directory
-cd folio-2026
+cd mine-2026
 
 # Install dependencies
 npm install
@@ -108,6 +108,8 @@ npm install
 # Start the development server
 npm run dev
 ```
+
+Then open [http://localhost:3000](http://localhost:3000). Requires Node.js 20 or newer.
 
 ### 🛠️ Developer Tools
 

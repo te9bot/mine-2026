@@ -61,7 +61,7 @@ function loadArrowTexture() {
 
 interface DetailsLinkProps {
   text: string;
-  href: string;
+  href?: string;
   previewImage?: string;
   /** Index into projectsData of the case study a plain click opens. */
   caseStudyIndex?: number;
@@ -300,7 +300,7 @@ export function DetailsLink({
       chargeRef.current = press.charge;
       if (press.charge >= 1 && !press.opened) {
         press.opened = true;
-        window.open(href, "_blank", "noopener,noreferrer");
+        if (href) window.open(href, "_blank", "noopener,noreferrer");
       }
       return;
     }
@@ -716,7 +716,7 @@ export function DetailsLink({
                 {twinContent}
               </a>
             )}
-            {caseStudyIndex !== undefined && (
+            {caseStudyIndex !== undefined && href && (
               <a
                 href={href}
                 target="_blank"

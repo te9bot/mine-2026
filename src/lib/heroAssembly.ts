@@ -9,7 +9,7 @@ export function heroAssemblyAt(progress: number, reducedMotion = false) {
   const acceleration = MathUtils.clamp((p - C.ORBIT_ACCEL_START) / (1 - C.ORBIT_ACCEL_START), 0, 1);
   return {
     unfold: reducedMotion ? 0 : MathUtils.smoothstep(p, C.UNFOLD_START, C.UNFOLD_END),
-    scatter: reducedMotion || p >= CONFIG.model.DETAILS_POPUP_START ? 0 : MathUtils.smoothstep(p, C.SCATTER_START, C.SCATTER_END),
+    scatter: reducedMotion || p >= CONFIG.model.DETAILS_POPUP_START ? 0 : MathUtils.smoothstep(p, C.SCATTER_START, C.SCATTER_END) * (1 - MathUtils.smoothstep(p, C.REBUILD_START, C.REBUILD_END)),
     opacity: 1 - fade,
     orbitOpacity: 1 - MathUtils.smoothstep(p, C.ORBIT_FADE_START, C.ORBIT_FADE_END),
     orbitExpansion: reducedMotion ? 0 : MathUtils.smoothstep(p, C.ORBIT_EXPAND_START, C.ORBIT_EXPAND_END),
