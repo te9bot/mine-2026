@@ -35,6 +35,11 @@ export const FONTS = {
 const SCROLL_TIMELINE_VIEWPORTS = 1.5;
 
 export const CONFIG = {
+  music: {
+    URL: "/media/music/sailor-song.mp4",
+    VOLUME: 0.25,
+    FADE_SECONDS: 1.5,
+  },
   heroAssembly: {
     UNFOLD_START: 0.025,
     UNFOLD_END: 0.65,

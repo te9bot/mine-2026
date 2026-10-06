@@ -45,6 +45,7 @@ import {
 } from "@/lib/workstationFrame";
 import { applyPointerCamera, bindPointerCameraInput, createPointerCameraRuntime } from "@/lib/pointerCamera";
 import { PortfolioCapture } from "./Workstation/PortfolioCapture";
+import { toggleBackgroundMusic } from "@/lib/backgroundMusic";
 import { WorkstationEnvironment } from "./WorkstationEnvironment";
 import {
   CRTDisplay,
@@ -74,6 +75,7 @@ import {
   getToolbarHit,
   isThemeToggleHit,
   setDockAppRunning,
+  setDockAppStopped,
   setGeniePresentation,
   setHtmlOverlayVisibility,
   updateDockRenderer,
@@ -1180,6 +1182,13 @@ export function WorkstationScene({ children }: { children: ReactNode }) {
         const appId = DOCK_APPS[dockIndex].id;
         if (appId === "safari" || appId === "vscode") {
           switchToApp(appId);
+        }
+        if (appId === "music") {
+          const scale = 1 + desktop.dockMagnification;
+          void toggleBackgroundMusic().then((playing) => {
+            if (playing) setDockAppRunning(dockRenderer, "music", scale);
+            else setDockAppStopped(dockRenderer, "music", scale);
+          });
         }
         return;
       }

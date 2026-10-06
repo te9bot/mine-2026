@@ -658,6 +658,17 @@ export function setDockAppRunning(
   redrawDockRenderer(renderer, activeScale);
 }
 
+export function setDockAppStopped(
+  renderer: DockRenderer,
+  appId: string,
+  activeScale: number,
+) {
+  const app = DOCK_APPS.find((candidate) => candidate.id === appId);
+  if (!app || !app.isRunning) return;
+  app.isRunning = false;
+  redrawDockRenderer(renderer, activeScale);
+}
+
 function getDockTarget(
   layout: ReturnType<typeof getDockLayout>,
   magnification: number,
