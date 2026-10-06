@@ -10,8 +10,8 @@ function fadeTo(target: number, onDone?: () => void) {
   const start = element.volume;
   const begin = performance.now();
   const step = (now: number) => {
-    const t = Math.min(1, (now - begin) / (CONFIG.music.FADE_SECONDS * 1000));
-    element.volume = start + (target - start) * t;
+    const t = Math.min(1, Math.max(0, (now - begin) / (CONFIG.music.FADE_SECONDS * 1000)));
+    element.volume = Math.min(1, Math.max(0, start + (target - start) * t));
     if (t < 1) fadeFrame = requestAnimationFrame(step);
     else onDone?.();
   };
