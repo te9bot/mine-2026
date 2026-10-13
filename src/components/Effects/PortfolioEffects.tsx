@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { MathUtils, NoToneMapping } from "three";
 import { CONFIG } from "@/config/constants";
@@ -41,6 +41,44 @@ export function PortfolioEffects() {
       gl.toneMapping = toneMapping;
       camera.layers.mask = mask;
       pipeline.dispose();
+    };
+  }, [gl, scene, camera]);
+
+  useEffect(() => {
+    let meshCount = -1;
+    let compiling = false;
+    const sweep = () => {
+      const pipeline = pipelineRef.current;
+      if (!pipeline || compiling) return;
+      let meshes = 0;
+      scene.traverse(object => {
+        if ("material" in object) meshes++;
+      });
+      if (meshes === meshCount) return;
+      meshCount = meshes;
+      compiling = true;
+      const previousTarget = gl.getRenderTarget();
+      gl.setRenderTarget(pipeline.composer.inputBuffer);
+      const pending = [gl.compileAsync(scene, camera)];
+      const page = scene.getObjectByName("WorkstationPage");
+      const surface = scene.getObjectByName("WorkstationSurface");
+      if (page && surface) {
+        const pageVisible = page.visible;
+        const surfaceVisible = surface.visible;
+        page.visible = false;
+        surface.visible = true;
+        pending.push(gl.compileAsync(scene, camera));
+        page.visible = pageVisible;
+        surface.visible = surfaceVisible;
+      }
+      gl.setRenderTarget(previousTarget);
+      Promise.all(pending).catch(() => undefined).finally(() => { compiling = false; });
+    };
+    const interval = window.setInterval(sweep, CONFIG.performanceMonitor.PRECOMPILE_INTERVAL_MS);
+    const stop = window.setTimeout(() => window.clearInterval(interval), CONFIG.performanceMonitor.PRECOMPILE_WINDOW_MS);
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(stop);
     };
   }, [gl, scene, camera]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { WebGLRenderer, type WebGLRendererParameters } from "three";
 import Model from "./Model";
@@ -33,14 +33,7 @@ import { SceneMotionProvider } from "@/context/SceneMotionContext";
 import { OrbitSignalContext, useOrbitSignal } from "@/context/OrbitSignalContext";
 
 function SceneReady({ onReady }: { onReady: () => void }) {
-  const { gl, scene, camera } = useThree();
   useEffect(onReady, [onReady]);
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      gl.compileAsync(scene, camera).catch(() => undefined);
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [gl, scene, camera]);
   return null;
 }
 
@@ -175,7 +168,7 @@ export default function Scene({
         ? CONFIG.performanceMonitor.LOW_DPR
         : next === "balanced"
           ? CONFIG.performanceMonitor.BALANCED_DPR
-          : CONFIG.performanceMonitor.HIGH_DPR,
+          : Math.min(CONFIG.performanceMonitor.HIGH_DPR, window.devicePixelRatio),
     );
   };
 

@@ -198,7 +198,7 @@ export const CONFIG = {
   },
   antialiasing: {
     MSAA_SAMPLES: 2,
-    WORKSTATION_MSAA_SAMPLES: 4,
+    WORKSTATION_MSAA_SAMPLES: 2,
     SMAA_PRESET: "HIGH",
   },
   performanceMonitor: {
@@ -209,6 +209,8 @@ export const CONFIG = {
     LOW_DPR: 1,
     BALANCED_DPR: 1,
     HIGH_DPR: 1.5,
+    PRECOMPILE_INTERVAL_MS: 600,
+    PRECOMPILE_WINDOW_MS: 60000,
   },
   scene: {
     CAMERA_FOV: 75,

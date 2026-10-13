@@ -1283,9 +1283,10 @@ export function WorkstationScene({ children }: { children: ReactNode }) {
 
   return (
     <group>
-      <group ref={pageGroupRef}>{children}</group>
+      <group name="WorkstationPage" ref={pageGroupRef}>{children}</group>
 
       <group
+        name="WorkstationSurface"
         ref={surfaceGroupRef}
         position={[0, 0, CONFIG.workstation.PLANE_Z]}
         visible={false}
