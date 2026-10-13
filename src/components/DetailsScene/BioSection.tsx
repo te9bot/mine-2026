@@ -1,10 +1,9 @@
 "use client";
 
-import { memo, Suspense } from "react";
+import { memo } from "react";
 import { DetailsText } from "./DetailsText";
-import { AnimatedRevealImage } from "./AnimatedRevealImage";
+import { BioProfileCard } from "./BioProfileCard";
 import { CONFIG, FONTS } from "@/config/constants";
-import { bioImage } from "@/data/content";
 
 interface BioSectionProps {
     heading: string;
@@ -15,7 +14,6 @@ interface BioSectionProps {
     headingY: number;
     textY: number;
     imageWidth: number;
-    imageHeight: number;
     textX: number;
     headingFontSize: number;
     bodyFontSize: number;
@@ -33,7 +31,6 @@ export const BioSection = memo(function BioSection({
     headingY,
     textY,
     imageWidth,
-    imageHeight,
     textX,
     headingFontSize,
     bodyFontSize,
@@ -60,21 +57,12 @@ export const BioSection = memo(function BioSection({
                 letterSpacing={CONFIG.detailsLayout.LETTER_SPACING}
             />
 
-            <Suspense fallback={null}>
-                <AnimatedRevealImage
-                    src={bioImage.src}
-                    width={imageWidth}
-                    height={imageHeight}
-                    position={[imageX, imageY, 0]}
-                    cornerRadius={
-                        CONFIG.detailsLayout.BIO_REVEAL_BLOCK_RADIUS_PX *
-                        pxTo3DWidth
-                    }
-                    delay={CONFIG.detailsTimings.BODY_DELAY}
-                    stagger={CONFIG.detailsTimings.BODY_STAGGER_STEP}
-                    startTrigger={startTrigger}
-                />
-            </Suspense>
+            <BioProfileCard
+                position={[imageX, imageY, 0]}
+                widthPx={imageWidth / pxTo3DWidth}
+                delay={CONFIG.detailsTimings.BODY_DELAY}
+                startTrigger={startTrigger}
+            />
 
             {lines.map((line, index) =>
                 line === "" ? null : (

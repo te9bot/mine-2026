@@ -6,6 +6,7 @@ import {
     educationData,
     coursesData,
     experienceData,
+    photographyContent,
     projectsData,
     skillsData,
 } from "@/data/content";
@@ -31,6 +32,7 @@ export function NoJsDetails() {
                 </ul>
             </div>
 
+            {projectsData.length > 0 && (
             <div className="mb-12">
                 <h3 className="w-full border-b border-(--border) pb-2 text-left text-3xl font-black text-(--text-primary)">
                     {DETAILS_SECTION_HEADINGS.projects}
@@ -58,6 +60,7 @@ export function NoJsDetails() {
                     ))}
                 </ul>
             </div>
+            )}
 
             <div className="mb-12">
                 <h3 className="w-full border-b border-(--border) pb-2 text-left text-3xl font-black text-(--text-primary)">
@@ -132,6 +135,34 @@ export function NoJsDetails() {
                             className="text-left text-lg leading-relaxed font-karla text-(--text-body)"
                         >
                             - {skill}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <div id="photography" className="mb-36">
+                <h3 className="w-full border-b border-(--border) pb-2 text-left text-3xl font-black text-(--text-primary)">
+                    {DETAILS_SECTION_HEADINGS.photography}
+                </h3>
+                <p className="mt-4 max-w-176 text-left text-lg leading-relaxed font-karla text-(--text-body)">
+                    {photographyContent.bookTitle}: {photographyContent.intro[0]}
+                </p>
+                <ul className="mt-8 grid gap-8 sm:grid-cols-2">
+                    {photographyContent.photos.map((photo, index) => (
+                        <li key={photo.src} className="text-left font-karla">
+                            <Image
+                                src={photo.src}
+                                alt={photo.alt}
+                                width={1200}
+                                height={900}
+                                className="h-auto w-full"
+                            />
+                            <p className="mt-3 text-lg text-(--text-primary)">
+                                {String(index + 1).padStart(2, "0")} · {photo.title}
+                            </p>
+                            <p className="mt-1 leading-relaxed text-(--text-body)">
+                                {photo.description}
+                            </p>
                         </li>
                     ))}
                 </ul>

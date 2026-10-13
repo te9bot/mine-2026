@@ -9,8 +9,8 @@ export const fallbackContent = {
 export const heroContent = {
     title: "Talha Zobayed",
     subtitle:
-        "Specialized in 3D design and visual storytelling.",
-    professions: ["Creative Designer", "3D Visualizer"],
+        "Building fast interfaces with a designer's eye.",
+    professions: ["Frontend Engineer", "3D Visualizer"],
     scrollHint: "Scroll to explore CV",
 } as const;
 
@@ -21,6 +21,7 @@ export const headerContent = {
     themeSeparator: "/",
     timeZone: "Asia/Dhaka",
     timeZoneLabel: "BST",
+    photography: "Photography",
     contact: {
         label: "Contact",
         href: "mailto:talhazobayed7@gmail.com",
@@ -43,6 +44,7 @@ export const experienceData = [
     { company: "RoktoSondhanBD", position: "Developer & Operations Member", duration: "Recent" },
     { company: "TEX Esports", position: "In-Game Leader & Strategist", duration: "Recent" },
 ] as const;
+
 // Every project owns a folder under /media/projects/<slug>/. `preview` is the
 // still the plate shows the moment a row is hovered, authored at 1280x800 to
 // match CONFIG.projectPreview.ASPECT; `loop` is an optional muted video that
@@ -52,7 +54,21 @@ export const experienceData = [
 // `slug` and everything under it belong to the case study the row opens: the
 // slug is what the URL is rewritten to, and `title` drops the " - Github" the
 // row carries for the link, which has no business being the study's headline.
-const projectsList = [
+export type CaseStudy = {
+    name: string;
+    link?: string;
+    loop?: string;
+    preview: string;
+    slug: string;
+    title: string;
+    role: string;
+    year: string;
+    stack: string;
+    lede: string;
+    body: readonly string[];
+};
+
+export const projectsData: readonly CaseStudy[] = [
     {
         name: "Portlio - Web Studio",
         link: "https://portlio-rouge.vercel.app",
@@ -61,11 +77,12 @@ const projectsList = [
         title: "Portlio",
         role: "Founder · Design & Engineering",
         year: "2026",
-        stack: "Next.js · TypeScript · Tailwind · GSAP · Lenis",
+        stack: "Next.js 16 · TypeScript · Tailwind 4 · GSAP · Lenis",
         lede: "Custom personal portfolio websites for students and young creatives.",
         body: [
-            "Marketing website for Portlio, a personal portfolio website studio. There are no accounts, dashboards or online payments: every form lands in the team's sheet and sales happen by phone.",
-            "Built on its own design system, with smooth scrolling and ScrollTrigger-driven motion throughout.",
+            "Marketing website for Portlio, a personal portfolio website studio. There are no accounts, dashboards or online payments: every form lands in the team's Google Sheet through an Apps Script webhook, and sales happen by phone.",
+            "Built on its own design system, with Lenis smooth scrolling driven from the GSAP ticker and ScrollTrigger scenes: a layered hero collage, a pinned horizontal portfolio strip and a file-mess-to-portfolio scrub.",
+            "Statically rendered and fully visible without JavaScript, with SEO built in: discipline pages, guides, a sitemap and JSON-LD, checked by an audit script.",
         ],
     },
     {
@@ -80,7 +97,8 @@ const projectsList = [
         lede: "Study tracking for Bangladeshi HSC, SSC and admission-test students.",
         body: [
             "Exam countdowns, a public exam calendar and a per-student study planner, built for students preparing for HSC, SSC and university admission tests in Bangladesh.",
-            "A FastAPI backend with async SQLAlchemy, PostgreSQL, Redis and scheduled jobs, behind a Next.js front end.",
+            "A FastAPI backend with async SQLAlchemy, Alembic migrations, PostgreSQL, Redis and APScheduler jobs, with passwordless OTP sign-in and JWT-protected APIs.",
+            "Three deployables: the public Next.js app, a separate admin app mounted at /admin through a Vercel rewrite, and the API on Render.",
         ],
     },
     {
@@ -95,7 +113,8 @@ const projectsList = [
         lede: "A community-reported electricity and load-shedding tracker for Bangladesh.",
         body: [
             "People report whether their area currently has power or is in load-shedding, and everyone can browse a live, filterable board of reports on a map.",
-            "Fully bilingual in English and Bangla, with a FastAPI and Postgres backend.",
+            "A public ledger sits behind the board: reports carry the electricity provider and outage duration, and anyone can confirm they are also affected. Aggregate stats and a provider-by-division breakdown show where outage time concentrates.",
+            "Fully bilingual in English and Bangla, with a FastAPI and Postgres backend served from a single Docker image.",
         ],
     },
     {
@@ -105,11 +124,12 @@ const projectsList = [
         title: "ELAKAI",
         role: "Design & Engineering",
         year: "2026",
-        stack: "React · TypeScript · Tailwind · Leaflet · PWA",
+        stack: "React · TypeScript · Vite · Supabase · Leaflet · PWA",
         lede: "Trusted local services and emergency contacts for Kushtia, in one place.",
         body: [
             "Hospitals, ambulances, pharmacies, electricians, plumbers and rentals, searchable in Bangla and English.",
             "Installable as a PWA and usable offline, so the numbers are there when the network is not.",
+            "There is no server of its own: a static frontend on GitHub Pages talks to Supabase, with Postgres row-level security as the only authorization and an admin panel for managing listings and photos.",
         ],
     },
     {
@@ -124,7 +144,8 @@ const projectsList = [
         lede: "An interactive pizza-ordering site with a drag-and-drop pizza builder.",
         body: [
             "Drag toppings onto the pizza or tap to add them, with live price and calorie tracking.",
-            "A full menu, cart, checkout, order confirmation and order tracking flow, plus combo shortcuts that load straight into the builder.",
+            "A full menu of pizzas, burgers, snacks and drinks, plus a cart, checkout, order confirmation and order tracking flow.",
+            "Popular combos load straight into the builder, and the page scrolls by wheel or click-and-drag. A static site with no build step.",
         ],
     },
     {
@@ -134,11 +155,12 @@ const projectsList = [
         title: "Flow Reverse Engineer",
         role: "Solo build",
         year: "2026",
-        stack: "Chrome Extension · TypeScript · Gemini",
+        stack: "Chrome Extension · TypeScript · React · Express · Gemini",
         lede: "Point at a video on the web and get back a Google Flow / Veo generation prompt.",
         body: [
             "The extension samples frames across a video's timeline in the browser and detects shot boundaries, then asks Gemini to reconstruct the camera, lighting, composition and motion behind it.",
             "It is not a captioning tool: it rebuilds what a camera operator, gaffer and editor would have done, so a similar shot can be recreated with an AI video generator.",
+            "A Manifest V3 extension with a React popup talks to an Express backend that returns a Zod-validated Video DNA, so the Gemini key never reaches the browser and the prompt can be regenerated without redoing the vision pass.",
         ],
     },
     {
@@ -146,222 +168,18 @@ const projectsList = [
         link: "https://my-website-mu-umber.vercel.app",
         preview: "/media/projects/eco/teaser.webp",
         slug: "zulubhai",
-        title: "Zulubhai Agency Site",
+        title: "zULUBHAI Agency Site",
         role: "Design & Engineering",
         year: "2026",
-        stack: "TypeScript · React",
-        lede: "Four specialists, one creative team: video, ads, SEO, websites and 3D.",
+        stack: "Next.js 16 · React Three Fiber · GSAP · Tailwind 4",
+        lede: "A digital studio site covering video, marketing, web and 3D services.",
         body: [
-            "A marketing site for a small creative agency, with a subscription-style pricing model and booking for discovery calls.",
+            "A studio platform with a service page for each line, a portfolio with a 3D model viewer, pricing, a blog and an FAQ, all on one design system.",
+            "A custom plan calculator prices pooled subscription hours, and a booking scheduler generates time-zone-aware slots and .ics invites. A cart, checkout, client dashboard and admin panel for bookings, orders, coupons and content round it out.",
+            "The 3D is lazy-loaded decoration only: visitors on reduced motion, Save-Data, low memory or without WebGL get a static fallback, and every page is real HTML.",
         ],
     },
-    {
-        name: "Ayesha Jahra Safa Portfolio - Live",
-        link: "https://portfolio-225.vercel.app",
-        preview: "/media/projects/portfolio-225/teaser.webp",
-        slug: "ayesha-portfolio",
-        title: "Ayesha Jahra Safa Portfolio",
-        role: "Client portfolio",
-        year: "2026",
-        stack: "HTML · CSS · JavaScript",
-        lede: "A three-page creative portfolio built as a static site with no dependencies.",
-        body: [
-            "No build step and nothing to install: a fresh clone runs immediately with a tiny zero-dependency dev server.",
-        ],
-    },
-    {
-        name: "Sayed Abu Bakar Siddik Portfolio - Live",
-        link: "https://portfolio-contact-section-3.vercel.app",
-        preview: "/media/projects/portfolio-contact-section/teaser.webp",
-        slug: "sayed-portfolio",
-        title: "Sayed Abu Bakar Siddik Portfolio",
-        role: "Client portfolio",
-        year: "2026",
-        stack: "Next.js · TypeScript · Radix UI",
-        lede: "Portfolio for a mechanical intern and 3D designer.",
-        body: [
-            "A dark, image-led personal site covering services, experience, projects, art and photography.",
-        ],
-    },
-    {
-        name: "Md Shadman Shakib Portfolio - Client",
-        preview: "/media/projects/shadman-portfolio/teaser.svg",
-        slug: "shadman-portfolio",
-        title: "Md Shadman Shakib Portfolio",
-        role: "Client portfolio",
-        year: "2026",
-        stack: "Vite · React · TypeScript · Lenis",
-        lede: "A cinematic portfolio built around an interactive contribution-style activity grid.",
-        body: [
-            "Every lit square maps back to one of eleven real experiences across research, technology, education, security and policy.",
-        ],
-    },
-    {
-        name: "Sanjida Akter Portfolio - Client",
-        preview: "/media/projects/sanjida-portfolio/teaser.svg",
-        slug: "sanjida-portfolio",
-        title: "Sanjida Akter Portfolio",
-        role: "Client portfolio",
-        year: "2026",
-        stack: "React · TypeScript · Vite · React Router",
-        lede: "Portfolio for work across AI, public health and data science.",
-        body: [
-            "A single-page app with a fixed profile sidebar and five routed sections: About, Resume, Portfolio, Art and Contact. All content lives in typed data modules.",
-        ],
-    },
-    {
-        name: "Talha's 3D Studio - Web",
-        preview: "/media/projects/talha-3d-studio/teaser.svg",
-        slug: "talha-3d-studio",
-        title: "Talha's 3D Studio",
-        role: "Design & Engineering",
-        year: "2026",
-        stack: "React · TypeScript · Tailwind",
-        lede: "A studio site for 3D design work.",
-        body: [
-            "A showcase site for 3D modelling, environments and visualisation work.",
-        ],
-    },
-    {
-        name: "Lakeside Cabin at Sunrise - 3D",
-        preview: "/media/projects/lakeside-cabin/teaser.webp",
-        slug: "lakeside-cabin",
-        title: "Lakeside Cabin at Sunrise",
-        role: "Cinematic 3D Environment",
-        year: "2025",
-        stack: "Blender · Substance Painter",
-        lede: "Tranquil lakeside setting with soft sunlight and gentle fog.",
-        body: [
-            "A cinematic environment built around one quiet moment: the first light of the day settling over still water, with fog softening everything beyond the cabin.",
-            "Part of an ongoing series of more than 55 3D game environments and assets created since 2023.",
-        ],
-    },
-    {
-        name: "Forest Water Surface Study - 3D",
-        preview: "/media/projects/forest-water-surface/teaser.webp",
-        slug: "forest-water-surface",
-        title: "Forest Water Surface Study",
-        role: "Environmental Realism",
-        year: "2025",
-        stack: "Blender · Substance Painter",
-        lede: "Realistic shallow-water simulation with dynamic ripples and natural reflections.",
-        body: [
-            "A study of shallow forest water featuring dynamic ripples, natural reflections, and dense submerged vegetation.",
-            "The focus is material accuracy and environmental detail, getting water to read as water at every depth.",
-        ],
-    },
-    {
-        name: "Forest Clearing at Morning Light - 3D",
-        preview: "/media/projects/forest-clearing/teaser.webp",
-        slug: "forest-clearing",
-        title: "Forest Clearing at Morning Light",
-        role: "3D Nature Simulation",
-        year: "2025",
-        stack: "Blender · Substance Painter",
-        lede: "A quiet woodland scene where early sunlight filters through tall pines.",
-        body: [
-            "Lush green undergrowth covers the forest floor, and an old wooden barrel sits partially hidden among the plants, suggesting a forgotten human presence.",
-            "The atmosphere feels calm and untouched, with gentle light and subtle shadows creating a peaceful, almost cinematic mood.",
-        ],
-    },
-    {
-        name: "Snowy Night House - 3D",
-        preview: "/media/projects/snowy-night-house/teaser.webp",
-        slug: "snowy-night-house",
-        title: "Snowy Night House",
-        role: "Stylized 3D Illustration",
-        year: "2025",
-        stack: "Blender",
-        lede: "Winter night scene with warm interior lighting.",
-        body: [
-            "A stylized winter night where cold blue snow meets the warm glow spilling from the windows.",
-        ],
-    },
-    {
-        name: "Countryside Cottage (Autumn) - 3D",
-        preview: "/media/projects/countryside-cottage/teaser.webp",
-        slug: "countryside-cottage",
-        title: "Countryside Cottage (Autumn)",
-        role: "Realistic 3D Environment",
-        year: "2025",
-        stack: "Blender · Substance Painter",
-        lede: "Rustic countryside house with detailed autumn textures.",
-        body: [
-            "A realistic rural cottage dressed in autumn, built around detailed, weathered textures and seasonal colour.",
-        ],
-    },
-    {
-        name: "Planetary Space Scene - 3D",
-        preview: "/media/projects/planetary-space-scene/teaser.webp",
-        slug: "planetary-space-scene",
-        title: "Planetary Space Scene",
-        role: "Sci-Fi 3D Environment",
-        year: "2025",
-        stack: "Blender",
-        lede: "Cinematic depiction of a distant planet with atmospheric glow.",
-        body: [
-            "A sci-fi environment study of a distant planet, lit to emphasise its atmospheric glow against deep space.",
-        ],
-    },
-    {
-        name: "Photographic Collection - Gallery",
-        preview: "/media/projects/photographic-collection/teaser.webp",
-        slug: "photographic-collection",
-        title: "Photographic Collection",
-        role: "Photography",
-        year: "2025",
-        stack: "Lightroom · Photoshop",
-        lede: "Eight frames on nature, industry, labour and solitude.",
-        body: [
-            "Quiet Bloom, Power at Dawn, Submerged Patterns, Through the Green Corridor, Watcher in the Mist, Lines of Labor, Industrial Silence and The Long Walk.",
-            "From white water lilies on still water to a lone figure walking into fog, the collection explores calm persistence, scale, rhythm and forward motion, where human systems meet the landscape around them.",
-        ],
-    },
-    {
-        name: "Video Showcase - YouTube",
-        link: "https://www.youtube.com/watch?v=-7zyak9mfQg",
-        preview: "/media/projects/video-showcase/teaser.svg",
-        slug: "video-showcase",
-        title: "Video Showcase",
-        role: "Motion & 3D",
-        year: "2025",
-        stack: "Blender · After Effects · Premiere Pro",
-        lede: "My work in motion: esports edits, 3D animation and motion graphics.",
-        body: [
-            "An esports frags compilation, a 3D work showcase, a 3D animation showcase and a look at modeling in Blender.",
-        ],
-    },
-    {
-        name: "Unimart Kids Carnival Campaign - Client",
-        preview: "/media/projects/unimart-kids-carnival/teaser.svg",
-        slug: "unimart-kids-carnival",
-        title: "Unimart Kids Carnival Campaign",
-        role: "Campaign Design",
-        year: "2025",
-        stack: "Photoshop · Illustrator",
-        lede: "Project was about precision and information.",
-        body: [
-            "Campaign visuals for an international client, where precision and clarity of information led every design decision.",
-        ],
-    },
-    {
-        name: "Premia Education Logo Design - Client",
-        preview: "/media/projects/premia-education/teaser.svg",
-        slug: "premia-education",
-        title: "Premia Education Logo Design",
-        role: "Brand Identity",
-        year: "2025",
-        stack: "Illustrator",
-        lede: "Creating a memorable brand identity for educational excellence.",
-        body: [
-            "A logo and identity built to feel trustworthy and memorable for an education brand.",
-        ],
-    },
-] as const;
-
-export const projectsData: readonly (Omit<(typeof projectsList)[number], "link"> & { link?: string; loop?: string })[] = projectsList;
-
-export type CaseStudy = (typeof projectsData)[number];
+];
 
 export const PROJECT_PREVIEW_SOURCES = projectsData.map(
     (project) => project.preview,
@@ -405,19 +223,19 @@ export const coursesData = [
 
 export const bioVariants = {
     narrative: [
-        "I'm a creative designer and visualizer from Dhaka, Bangladesh, specialized in 3D design and visual storytelling. I've built content for 10 Minute School, led design at Ostad, taught graphic design at BRAC, and created more than 55 3D game environments and assets since 2023.",
-        "Outside the studio I work across data analytics, research and competitive esports, from quantum error correction experiments and an AI/ML water safety study to leading TEX Esports to a top-6 PMCO finish. I design and code beautifully simple things, and I love what I do.",
+        "I'm a frontend engineer and data analyst with a visual designer's eye, based in Dhaka, Bangladesh. I build fast, accessible interfaces in React, Next.js and TypeScript, and I turn raw data into dashboards and decisions people can actually read.",
+        "My design background, from 3D and motion to brand work for 10 Minute School, Ostad and BRAC, shapes how I build: clear systems, careful detail and interfaces that feel as good as they look. I design and code beautifully simple things, and I love what I do.",
     ],
     manifesto: [
         "I design and code beautifully simple things.",
-        "3D design and visual storytelling, end to end.",
-        "Research, analytics and esports sharpen how I design.",
+        "Frontend engineering, data analysis and visual design, end to end.",
+        "Data sharpens the decisions, design sharpens the delivery.",
         "Currently available for freelance and full-time work.",
     ],
     facts: [
         "Based in / Dhaka, Bangladesh",
-        "Focus / 3D design, visual design, motion graphics",
-        "Toolkit / Blender, Substance Painter, Unreal Engine, Adobe CC",
+        "Focus / Frontend engineering, data analysis, visual design",
+        "Toolkit / React, Next.js, TypeScript, Figma, Blender, Adobe CC",
         "Open to / Freelance and full-time roles",
         "Contact / talhazobayed7@gmail.com",
     ],
@@ -426,6 +244,81 @@ export const bioVariants = {
 export const bioImage = {
     src: "/images/talha_bio.jpg",
     alt: "Talha Zobayed Tanim smiling with arms crossed in a striped T-shirt against a blue backdrop",
+} as const;
+
+export const profileCardContent = {
+    avatarUrl: bioImage.src,
+    name: heroContent.title,
+    title: "Frontend Engineer & Data Analyst",
+    handle: "talhazobayed7",
+    status: headerContent.availability,
+    contactText: headerContent.contact.label,
+    contactHref: headerContent.contact.href,
+} as const;
+
+export type PhotoBookPhoto = {
+    src: string;
+    title: string;
+    chapter: string;
+    description: string;
+    alt: string;
+};
+
+const photo = (
+    file: string,
+    chapter: string,
+    title: string,
+    description: string,
+    alt: string,
+): PhotoBookPhoto => ({ src: `/photography/${file}.webp`, chapter, title, description, alt });
+
+export const photographyContent = {
+    heading: "Photography",
+    intro: [
+        "Photography is my favorite habit. Fog over the Padma, a farmer in a wet field, the last boat home at dusk: twenty-five frames from around home, bound into one small book.",
+        "Open it and turn the pages.",
+    ],
+    bookTitle: "My Favorite Habit",
+    bookSubtitle: "A photo book",
+    photographer: heroContent.title,
+    byline: `Photographs by ${heroContent.title}`,
+    openLabel: "Open the book",
+    foreword: [
+        "I never planned to become a photographer. I just kept stopping: for fog sitting on the river, for light coming through leaves, for a boat crossing at the exact moment the sky turned orange.",
+        "Most of these frames were made around Bheramara, along the Padma and its bridges, on mornings I should have been asleep and evenings I should have been home.",
+        "Photography taught me to look twice. That second look is what I bring to everything I design and build.",
+    ],
+    closing: [
+        "Thank you for turning the pages.",
+        "The habit continues. There is always another morning with fog on the river.",
+    ],
+    photos: [
+        photo("03", "Morning Fog", "Into the White", "The Lalon Shah Bridge walking into winter fog over the Padma. One small boat underneath is the only thing moving, and the far bank simply isn't there.", "A long concrete bridge disappearing into thick fog above a river, a small boat below"),
+        photo("02", "Morning Fog", "Two Bridges", "The red steel of the Hardinge Bridge and the Lalon Shah Bridge behind it, framed by leaves. A boatman crosses the teal water between a century of engineering.", "A red truss railway bridge and a second bridge in fog, framed by green leaves over teal water"),
+        photo("17", "Morning Fog", "The Commute", "A cyclist rides an old concrete bridge into the mist. I stood still and let him go until the fog almost took him.", "A man cycling away across a narrow concrete bridge into fog"),
+        photo("13", "Morning Fog", "Still Water", "Fog resting on a wetland while water lilies open in the clear shallows. All the colour comes from the water, none from the sky.", "Misty wetland with clear green water and white water lilies"),
+        photo("19", "Morning Fog", "The Way Home", "A dirt path between trees and rice fields, the early haze turning gold. Every village has a path like this, and I never get tired of them.", "A dirt path through trees beside green fields in golden morning haze"),
+        photo("20", "Morning Fog", "Lone Tree", "One tree on the horizon and a field of young paddy in front of it. I got down into the grass so the tree could stand tall.", "A single round tree on the horizon behind a field of young green rice"),
+        photo("14", "Morning Fog", "Hyacinth Season", "Water hyacinth in full bloom, and a half-built building fading out behind the trees. The city and the marsh, side by side.", "A marsh covered in purple water hyacinth flowers with a hazy building behind"),
+        photo("22", "Morning Fog", "Light Through Leaves", "Sunlight cutting through the canopy in long beams. You get about five minutes of this before the light flattens out.", "Sunbeams streaming through dense green tree branches"),
+        photo("08", "Daylight", "Field Work", "A farmer and his buffalo working a flooded field, framed through the arch of an old tree. Patience on both sides of the lens.", "A farmer with two buffalo in a wet field, seen through a gap in a tree trunk"),
+        photo("04", "Daylight", "Old Iron, New Power", "The Hardinge Bridge in front of the cooling towers at Rooppur. A hundred years of change in one frame.", "Cooling towers behind a red truss bridge across a blue river under a bright sky"),
+        photo("12", "Daylight", "Inside the Truss", "Between the rails inside the Hardinge Bridge, the red steel repeats until it becomes a tunnel. Symmetry does all the work here.", "Railway tracks running through the red steel truss of a bridge in perfect symmetry"),
+        photo("10", "Daylight", "Arches", "The vaulted shells of Kamalapur station, travellers walking toward the light at the far end. A building that frames everyone who passes through it.", "People walking under the repeating concrete arches of a railway station"),
+        photo("11", "Daylight", "Riverside Break", "A man resting on a riverside railing, phone in hand, under bougainvillea and beside a hand-painted pillar. A quiet minute in a loud day.", "A man sitting on a railing by a river, beneath pink bougainvillea, next to a colourfully painted pillar"),
+        photo("01", "Daylight", "Watching the River", "A father and child on a bamboo platform looking out over the water, with a few mynas keeping them company.", "A man holding a child on a wooden platform under a bamboo shed, birds perched nearby"),
+        photo("05", "Daylight", "Bougainvillea", "Pink bougainvillea pushing through a wall of green. I shot this one for the colour and nothing else.", "Pink bougainvillea flowers scattered through dense green foliage"),
+        photo("09", "Daylight", "Afloat", "A white gerbera and soft pink roses resting on dark water. Still life, found rather than arranged.", "A white gerbera and pink roses floating on dark water among leaves"),
+        photo("07", "Daylight", "Moored", "Two wooden boats from above, resting in water thick with duckweed. Seen from the bank they were ordinary; from up here they became shapes.", "Two wooden boats seen from above on dark water covered in green duckweed"),
+        photo("15", "Daylight", "Corner Table", "A café bookshelf glowing under warm lamps. Not every frame needs a river; sometimes it is just a good corner to sit in.", "A warmly lit café with a wooden bookshelf, plants and chairs"),
+        photo("18", "Golden Hour", "Dewdrop Sun", "The setting sun balanced inside a drop hanging from a blade of grass. It took a lot of patience, very close to the ground, to line it up.", "A dewdrop on a blade of grass holding the glowing sun against an amber sky"),
+        photo("16", "Golden Hour", "Padma Sunset", "Fishing boats heading home across the Padma, with the Rooppur towers resting on the horizon.", "Small boats on a wide river at sunset with cooling towers on the far shore"),
+        photo("06", "Golden Hour", "Lilies at Dusk", "White water lilies opening on a pond while pink clouds float between the pads.", "White water lilies among green pads, pink evening clouds reflected in the water"),
+        photo("21", "Blue Hour", "Reflection", "A boat resting at the edge of flooded fields at blue hour. Its reflection is sharper than the boat itself.", "A wooden boat and its mirror reflection in still blue water at twilight"),
+        photo("24", "Blue Hour", "Last Crossing", "Two boatmen rowing home as the sky turns from orange to blue.", "Two men rowing a wooden boat on a river under an orange and blue sunset sky"),
+        photo("23", "Blue Hour", "Friends on the Bow", "Friends sitting on the edge of a boat, feet over the water, while the evening clouds turn pink.", "Silhouettes of friends sitting on the bow of a boat over the river at dusk"),
+        photo("25", "Blue Hour", "Homeward", "A boat full of silhouettes crossing under a burning sky. The last frame of the day, and my favourite way to end one.", "A boat with silhouetted passengers crossing a river beneath a fiery orange sunset"),
+    ],
 } as const;
 
 export type BioVariant = keyof typeof bioVariants;

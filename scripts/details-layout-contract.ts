@@ -30,16 +30,17 @@ export function checkDetailsLayout(fontsReady = false) {
         assert(DETAILS_SECTION_HEADINGS[key].length > 0, `${key} has a heading`);
       }
       for (const key of Object.keys(DETAILS_SECTION_CONTENT) as DetailsListSectionKey[]) {
-        assert(layout.sectionLines[key].length > 0, `${key} preserves its copy`);
+        assert(layout.sectionLines[key].length > 0 || (key === "projects" && !projectsData.length), `${key} preserves its copy`);
       }
       const order: readonly DetailsListSectionKey[] = layout.layoutMode === "wide"
         ? WIDE_STACKED_SECTION_KEYS
-        : ["experience", "skills", "projects", "achievements", "education", "courses"];
+        : (["experience", "skills", "projects", "achievements", "education", "courses"] as const).filter(key => key !== "projects" || projectsData.length > 0);
       for (let index = 1; index < order.length; index++) {
         assert(layout.sections[order[index]].headingY > layout.sections[order[index - 1]].bottomY, `${order[index]} clears the previous section`);
       }
       const detailsBottom = Math.max(...order.map(key => layout.sections[key].bottomY), layout.sections.skills.bottomY);
-      assert(layout.sections.bio.headingY > detailsBottom, "Bio reads as a separate screen");
+      assert(layout.sections.photography.headingY > detailsBottom, "Photography reads as a separate screen");
+      assert(layout.sections.bio.headingY > layout.sections.photography.bottomY, "Bio follows Photography as a separate screen");
       assert(layout.bioImageWidth > 0 && layout.bioImageHeight > 0 && layout.bioLines.length > 0, "Bio retains its image and copy");
       assert(layout.bioImageY + layout.bioImageHeight <= layout.contentHeight, "Bio image stays within the scroll extent");
       assert(layout.contentHeight <= layout.overflow + layout.usableHeight + 1e-6, "The scroll extent includes all content");
@@ -54,6 +55,10 @@ export function checkDetailsLayout(fontsReady = false) {
       if (layout.layoutMode === "narrow") {
         assert(layout.sections.bio.bodyY > layout.bioImageY + layout.bioImageHeight, "Bio copy clears the stacked image");
       }
+      assert(layout.photoBookY >= layout.sections.photography.headingY, "The photo book starts with its heading");
+      assert(layout.photoBookWidth > 0 && layout.photoBookHeight > 0, "Photography retains its book");
+      assert(layout.photoBookY + layout.photoBookHeight <= layout.contentHeight + 1e-6, "The photo book stays within the scroll extent");
+      assert(layout.photoBookXOffset >= 0, "The photo book stays inside the content column");
       scenarios++;
     }
   }

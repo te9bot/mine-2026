@@ -23,6 +23,7 @@ export function NoJsContent({ rendererFailed = false }: { rendererFailed?: boole
             <header className="flex flex-wrap justify-between gap-4 px-[3vw] py-6 font-karla font-light text-sm text-(--text-secondary)">
                 <span>{headerContent.coordinates}</span>
                 <span>{headerContent.availability}</span>
+                <a href="#photography">{headerContent.photography}</a>
                 <a href={headerContent.contact.href}>
                     {headerContent.contact.label}
                 </a>

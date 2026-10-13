@@ -46,6 +46,10 @@ export interface DetailsLayout {
     bioImageY: number;
     bioTextOffset: number;
     bioTextMaxWidth: number;
+    photoBookWidth: number;
+    photoBookHeight: number;
+    photoBookXOffset: number;
+    photoBookY: number;
     modelGapCenterPx: number;
     modelAnchorY: number;
     modelInterludeHeight: number;
@@ -173,15 +177,35 @@ function calculateWideDetailsLayout({
     const skillsLeftEdge = viewportWidth - marginX - widestSkill;
     const modelGapCenterPx = (projectsRightEdge + skillsLeftEdge) / 2;
 
+    const wideTextWidth = Math.max(
+        viewportWidth * L.WIDE_TEXT_RIGHT_EDGE_MULT - marginX - bodyColumnOffset,
+        bodyMaxWidth * L.WIDE_TEXT_MIN_WIDTH_MULT,
+    );
+    const wrapWide = (items: readonly string[], width = wideTextWidth) =>
+        items.flatMap((item) =>
+            wrapText(item, width, bodyFontSize, L.LETTER_SPACING, fontsReady),
+        );
+    const achievementRows = achievementsData.flatMap(({ name, link }) =>
+        wrapText(
+            name,
+            wideTextWidth -
+                bodyFontSize *
+                    (CONFIG.detailsLink.ARROW_GAP_MULT +
+                        CONFIG.detailsLink.ARROW_SIZE_MULT +
+                        CONFIG.detailsLink.ARROW_TWIN_OVERHANG_EM),
+            bodyFontSize,
+            L.LETTER_SPACING,
+            fontsReady,
+        ).map((text) => ({ text, href: link })),
+    );
     const sectionLines: Record<DetailsListSectionKey, string[]> = {
-        experience: [...DETAILS_SECTION_CONTENT.experience.wideLines],
+        experience: wrapWide(DETAILS_SECTION_CONTENT.experience.wideLines),
         skills: [...DETAILS_SECTION_CONTENT.skills.wideLines],
         projects: [...DETAILS_SECTION_CONTENT.projects.wideLines],
-        achievements: [...DETAILS_SECTION_CONTENT.achievements.wideLines],
-        education: [...DETAILS_SECTION_CONTENT.education.wideLines],
-        courses: [...DETAILS_SECTION_CONTENT.courses.wideLines],
+        achievements: achievementRows.map(({ text }) => text),
+        education: wrapWide(DETAILS_SECTION_CONTENT.education.wideLines),
+        courses: wrapWide(DETAILS_SECTION_CONTENT.courses.wideLines),
     };
-    const achievementRows = achievementsData.map(({ name, link }) => ({ text: name, href: link }));
 
     const lineHeights: Record<DetailsListSectionKey, number> = {
         experience: bodyLineHeight,
@@ -222,6 +246,9 @@ function calculateWideDetailsLayout({
 
     for (const key of WIDE_STACKED_SECTION_KEYS) place(key, "left");
     place("skills", "right");
+    if (!projectsData.length) {
+        offsets.projects = { headingY: 0, bodyY: 0, bottomY: 0 };
+    }
 
     const topInset =
         viewportHeight * -L.TARGET_BASE_Y_MULT + marginY * L.SECTION_TOP_OFF_MULT;
@@ -234,7 +261,19 @@ function calculateWideDetailsLayout({
     );
     const detailsOverflow = Math.max(0, detailsHeight - usableHeight);
 
-    const bioTopY = detailsOverflow + viewportHeight;
+    const photoTopY = detailsOverflow + viewportHeight;
+    const photoBookY = photoTopY;
+    const photoBookWidth = contentWidth - bodyColumnOffset;
+    const photoBookHeight = Math.max(usableHeight, L.PHOTO_BOOK_MIN_HEIGHT_PX);
+    const photoHeight = photoBookY - photoTopY + photoBookHeight;
+    offsets.photography = {
+        headingY: photoTopY,
+        bodyY: photoBookY,
+        bottomY: photoTopY + photoHeight,
+    };
+    const photoOverflow = Math.max(0, photoHeight - usableHeight);
+
+    const bioTopY = photoTopY + photoOverflow + viewportHeight;
     const bioTextY = bioTopY + headingFontSize * L.BIO_CONTENT_TOP_MULT;
 
     const bioHeight = Math.max(
@@ -268,6 +307,10 @@ function calculateWideDetailsLayout({
         bioImageY: bioTopY,
         bioTextOffset,
         bioTextMaxWidth,
+        photoBookWidth,
+        photoBookHeight,
+        photoBookXOffset: bodyColumnOffset,
+        photoBookY,
         modelGapCenterPx,
         modelAnchorY:
             offsets.projects.bodyY +
@@ -401,7 +444,11 @@ function calculateNarrowDetailsLayout({
     const modelInterludeHeight = 0;
     const modelAnchorY = cursor;
 
-    place("projects", projectsData.length, projectLineHeight);
+    if (projectsData.length) {
+        place("projects", projectsData.length, projectLineHeight);
+    } else {
+        offsets.projects = { headingY: cursor, bodyY: cursor, bottomY: cursor };
+    }
     place("achievements", sectionLines.achievements.length, achievementsLinked ? projectLineHeight : bodyLineHeight);
     place("education", sectionLines.education.length, bodyLineHeight);
     place("courses", sectionLines.courses.length, bodyLineHeight);
@@ -413,7 +460,29 @@ function calculateNarrowDetailsLayout({
     const usableHeight = Math.max(0, viewportHeight - topInset - bottomInset);
     const detailsHeight = Math.max(0, cursor - sectionGap);
     const detailsOverflow = Math.max(0, detailsHeight - usableHeight);
-    const bioTopY = detailsOverflow + viewportHeight;
+    const photoTopY = detailsOverflow + viewportHeight;
+    const photoBookY =
+        photoTopY +
+        headingBlockHeight(DETAILS_SECTION_HEADINGS.photography, headingFontSize) +
+        bodyTopOffset;
+    const photoBookWidth = contentWidth;
+    const photoBookHeight = Math.max(
+        Math.min(
+            usableHeight - (photoBookY - photoTopY),
+            contentWidth * CONFIG.photoBook.PAGE_ASPECT +
+                CONFIG.photoBook.CONTROLS_PX,
+        ),
+        L.PHOTO_BOOK_MIN_HEIGHT_PX,
+    );
+    const photoHeight = photoBookY + photoBookHeight - photoTopY;
+    offsets.photography = {
+        headingY: photoTopY,
+        bodyY: photoBookY,
+        bottomY: photoTopY + photoHeight,
+    };
+    const photoOverflow = Math.max(0, photoHeight - usableHeight);
+
+    const bioTopY = photoTopY + photoOverflow + viewportHeight;
     const bioHeadingHeight = headingBlockHeight(
         DETAILS_SECTION_HEADINGS.bio,
         headingFontSize,
@@ -460,6 +529,10 @@ function calculateNarrowDetailsLayout({
         bioImageY,
         bioTextOffset: 0,
         bioTextMaxWidth: contentWidth,
+        photoBookWidth,
+        photoBookHeight,
+        photoBookXOffset: (contentWidth - photoBookWidth) / 2,
+        photoBookY,
         modelGapCenterPx: viewportWidth / 2,
         modelAnchorY,
         modelInterludeHeight,

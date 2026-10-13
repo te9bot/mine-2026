@@ -25,6 +25,7 @@ import {
 } from "@/lib/virtualDesktop";
 import { HEADER_LAYER } from "../Effects/HeaderExclusionEffect";
 import { THEME_SWEEP_LAYER } from "../ThemeSweep";
+import { CAPTURE_ONLY_LAYER } from "@/lib/captureLayer";
 
 type DesktopTextures = {
   chrome: THREE.CanvasTexture;
@@ -89,6 +90,7 @@ export class PortfolioCapture {
       this.camera.fov = CONFIG.scene.CAMERA_FOV;
       this.camera.layers.enable(HEADER_LAYER);
       this.camera.layers.enable(THEME_SWEEP_LAYER);
+      this.camera.layers.enable(CAPTURE_ONLY_LAYER);
       this.camera.updateProjectionMatrix();
       this.camera.updateMatrixWorld();
       page.visible = true;

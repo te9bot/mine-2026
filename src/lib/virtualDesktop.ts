@@ -14,7 +14,7 @@ type DockApp = {
 
 export const DOCK_APPS: DockApp[] = [
   { id: "finder", label: "Finder", icon: "finder", isRunning: true },
-  { id: "safari", label: "Safari — Folio-2026", icon: "safari", isRunning: true },
+  { id: "safari", label: "Safari — talha.cloud", icon: "safari", isRunning: true },
   { id: "vscode", label: "Visual Studio Code", icon: "vscode", isRunning: false },
   { id: "codex", label: "Codex", icon: "codex", isRunning: false },
   { id: "gaming", label: "Gaming", icon: "gaming", isRunning: false },
@@ -949,7 +949,7 @@ export function createBrowserChromeTexture({
   }px Arial`;
   textureContext.textAlign = "center";
   textureContext.textBaseline = "middle";
-  textureContext.fillText("folio-2026", browserX + browserWidth / 2, controlY);
+  textureContext.fillText("talha.cloud", browserX + browserWidth / 2, controlY);
   textureContext.restore();
 
   const texture = new THREE.CanvasTexture(textureCanvas);
@@ -1050,7 +1050,7 @@ function getToolbarLayout(
   const brandWidth = context.measureText("NM").width;
   const appX = leftPadding + brandWidth + itemGap;
   context.font = `600 ${fontSize}px Arial`;
-  const appWidth = context.measureText("Folio-2026").width;
+  const appWidth = context.measureText("talha.cloud").width;
   const actionsX = appX + appWidth + itemGap;
   context.font = `400 ${fontSize}px Arial`;
   const actionsWidth = context.measureText("Actions").width + height * 0.58;
@@ -1080,7 +1080,7 @@ function getToolbarLayout(
 
 function getToolbarMenuItems(menuType: "actions" | "go") {
   return menuType === "actions"
-    ? ["Go to Top", "Toggle Theme", "Close Folio-2026"]
+    ? ["Go to Top", "Toggle Theme", "Close talha.cloud"]
     : DOCK_APPS.map((app) => app.label);
 }
 
@@ -1236,7 +1236,7 @@ export function drawToolbar(renderer: ToolbarRenderer) {
   context.textAlign = "left";
   context.fillText("NM", layout.leftPadding, layout.height / 2 + layout.fontSize * 0.03);
   context.font = `600 ${layout.fontSize}px Arial`;
-  context.fillText("Folio-2026", layout.appX, layout.height / 2 + layout.fontSize * 0.03);
+  context.fillText("talha.cloud", layout.appX, layout.height / 2 + layout.fontSize * 0.03);
   context.font = `400 ${layout.fontSize}px Arial`;
   context.fillText("Actions", layout.actionsX, layout.height / 2 + layout.fontSize * 0.03);
   context.fillText("Go", layout.goX, layout.height / 2 + layout.fontSize * 0.03);

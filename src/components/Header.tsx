@@ -11,6 +11,10 @@ import { Clock } from "./HeaderScene/Clock";
 import { ThemeToggle } from "./HeaderScene/ThemeToggle";
 import { ThemeIconToggle } from "./HeaderScene/ThemeIconToggle";
 import { useSceneCapabilities } from "@/context/SceneCapabilitiesContext";
+import { useLenis } from "lenis/react";
+import { useFontsReady } from "@/hooks/useFontsReady";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { calculateDetailsLayout } from "@/lib/detailsLayout";
 
 export function Header() {
   const { fontSize } = useDebugSettings().header;
@@ -19,6 +23,22 @@ export function Header() {
   const { startTrigger } = useAnimationContext();
   const { theme, setTheme } = useTheme();
   const { layoutMode } = useSceneCapabilities();
+  const lenis = useLenis();
+  const fontsReady = useFontsReady();
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  const scrollToPhotography = () => {
+    const layout = calculateDetailsLayout({
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+      fontsReady,
+    });
+    const top =
+      window.innerHeight * (CONFIG.scrollTimeline.VIEWPORTS - 1) +
+      layout.sections.photography.headingY;
+    if (lenis && !prefersReducedMotion) lenis.scrollTo(top);
+    else window.scrollTo({ top, behavior: prefersReducedMotion ? "auto" : "smooth" });
+  };
 
   const contentWidth = viewport.width - 2 * marginX;
   const narrowPixelFontSize = Math.min(
@@ -44,6 +64,9 @@ export function Header() {
     const themeX =
       leftX +
       (rightX - leftX) * CONFIG.header.NARROW_THEME_SLOT_T;
+    const photographyX =
+      leftX +
+      (rightX - leftX) * CONFIG.header.NARROW_PHOTOGRAPHY_SLOT_T;
     return (
       <group position={[0, y, 0]}>
         <HeaderItem
@@ -55,11 +78,21 @@ export function Header() {
           startTrigger={startTrigger}
           delay={CONFIG.header.REVEAL_DELAY}
         />
+        <HeaderItem
+          text={headerContent.photography}
+          position={[photographyX, 0, 0]}
+          anchorX="left"
+          calculatedFontSize={calculatedFontSize}
+          pixelFontSize={pixelFontSize}
+          startTrigger={startTrigger}
+          delay={CONFIG.header.REVEAL_DELAY + CONFIG.header.REVEAL_STAGGER}
+          onActivate={scrollToPhotography}
+        />
         <ThemeIconToggle
           position={[themeX, 0, 0]}
           size={CONFIG.header.NARROW_ICON_SIZE_PX * pxTo3DWidth}
           startTrigger={startTrigger}
-          delay={CONFIG.header.REVEAL_DELAY + CONFIG.header.REVEAL_STAGGER}
+          delay={CONFIG.header.REVEAL_DELAY + CONFIG.header.REVEAL_STAGGER * 2}
           theme={theme}
           onToggle={() => setTheme(theme === "Light" ? "Dark" : "Light")}
         />
@@ -70,7 +103,7 @@ export function Header() {
           calculatedFontSize={calculatedFontSize}
           pixelFontSize={pixelFontSize}
           startTrigger={startTrigger}
-          delay={CONFIG.header.REVEAL_DELAY + CONFIG.header.REVEAL_STAGGER * 2}
+          delay={CONFIG.header.REVEAL_DELAY + CONFIG.header.REVEAL_STAGGER * 3}
           href={headerContent.contact.href}
         />
       </group>
@@ -120,13 +153,23 @@ export function Header() {
         delay={delayAt(3)}
       />
       <HeaderItem
-        text={headerContent.contact.label}
+        text={headerContent.photography}
         position={[slots[4], 0, 0]}
-        anchorX="right"
+        anchorX="left"
         calculatedFontSize={calculatedFontSize}
         pixelFontSize={pixelFontSize}
         startTrigger={startTrigger}
         delay={delayAt(4)}
+        onActivate={scrollToPhotography}
+      />
+      <HeaderItem
+        text={headerContent.contact.label}
+        position={[slots[5], 0, 0]}
+        anchorX="right"
+        calculatedFontSize={calculatedFontSize}
+        pixelFontSize={pixelFontSize}
+        startTrigger={startTrigger}
+        delay={delayAt(5)}
         href={headerContent.contact.href}
       />
     </group>

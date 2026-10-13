@@ -331,7 +331,7 @@ export const CONFIG = {
     SILL_BOOKS_POSITION: { x: -0.76, y: 0.34, z: -0.6 },
     CAMERA_CURVE: { x: 0.035, y: 0.05, z: 0.1 },
     CAMERA_ARC_START: 0.18,
-    CAMERA_MAX_ZOOM_OUT: 0.56,
+    CAMERA_MAX_ZOOM_OUT: 0.2,
     CAMERA_NARROW_WIDTH: 0.72,
     PROXY_YAW: { mouse: -5, skateboard: -90 },
     LIGHT_WINDOW_OFFSET_Z: 0.6,
@@ -521,11 +521,27 @@ export const CONFIG = {
     RETURN_SNAP_EPSILON: 0.0025,
     DETAILS_POPUP_START: 0.9,
     DETAILS_POPUP_SCALE: 0.6,
+    CLOSING_EXIT_VIEWPORTS: 0.6,
     COMPANION: {
       WIDE: { X: 0.33, Y: -0.2, SCALE: 1.9 },
       NARROW: { X: 0.3, Y: -0.33, SCALE: 1.05 },
       LOOK_MAX_ANGLE: 0.75,
       LEAN: 0.02,
+    },
+    ELASTIC: {
+      POSITION_STIFFNESS: 90,
+      POSITION_DAMPING: 7,
+      DEFORM_STIFFNESS: 150,
+      DEFORM_DAMPING: 6,
+      FOLLOW: 0.55,
+      MAX_SUBSTEP: 1 / 120,
+      STRETCH_GAIN: 2.4,
+      MAX_STRETCH: 2.1,
+      FLING_BOOST: 0.6,
+      MAX_OFFSET_HEIGHTS: 0.7,
+      HIT_RADIUS_MULT: 0.45,
+      REST_EPSILON: 0.0005,
+      VELOCITY_SMOOTHING: 18,
     },
     FOLD_FADE_CLEARANCE_MULT: 0.03,
     FOLD_FADE_SPAN_MULT: 0.14,
@@ -535,6 +551,10 @@ export const CONFIG = {
     TILT_RESPONSE: 4,
     IDLE_ROTATION_SPEED: 0.45,
     DEPTH_Z: 2,
+  },
+  profileCard: {
+    WIDTH_PX: 340,
+    HEIGHT_PX: 480,
   },
   detailsLayout: {
     HEADING_SIZE_MULT: 0.03,
@@ -557,13 +577,9 @@ export const CONFIG = {
     POINTER_SYNC_PX: 0.5,
     REVEAL_MARGIN_MULT: 0.04,
     BIO_IMAGE_WIDTH_MULT: 0.26,
-    BIO_IMAGE_ASPECT: 2000 / 1500,
+    BIO_IMAGE_ASPECT: 480 / 340,
     BIO_CONTENT_TOP_MULT: 1.75,
     BIO_COLUMN_GAP_MULT: 0.04,
-    BIO_REVEAL_LINES: 9,
-    BIO_REVEAL_BLOCK_Z: 0.02,
-    BIO_REVEAL_BLOCK_OVERHANG: 1.1,
-    BIO_REVEAL_BLOCK_RADIUS_PX: 8,
     NARROW_HEADING_SIZE_MULT: 0.09,
     NARROW_HEADING_MIN_PX: 28,
     NARROW_HEADING_MAX_PX: 42,
@@ -580,6 +596,22 @@ export const CONFIG = {
     NARROW_MODEL_INTERLUDE_MAX_PX: 280,
     NARROW_BIO_IMAGE_WIDTH_MULT: 0.7,
     NARROW_BIO_IMAGE_GAP_MULT: 0.85,
+    PHOTO_BOOK_MIN_HEIGHT_PX: 380,
+    WIDE_TEXT_RIGHT_EDGE_MULT: 0.69,
+    WIDE_TEXT_MIN_WIDTH_MULT: 0.45,
+  },
+  photoBook: {
+    PAGE_ASPECT: 4 / 3,
+    MAX_SPREAD_WIDTH_FRACTION: 0.9,
+    MAX_PAGE_HEIGHT_FRACTION: 0.76,
+    INLINE_SINGLE_PAGE_WIDTH_FRACTION: 0.92,
+    CONTROLS_PX: 64,
+    SINGLE_PAGE_BELOW_PX: 720,
+    FLIP_MS: 900,
+    PERSPECTIVE_PX: 2600,
+    DRAG_COMMIT_FRACTION: 0.35,
+    DRAG_THRESHOLD_PX: 6,
+    LOAD_RADIUS_SHEETS: 2,
   },
   detailsReveal: {
     BLOCK_WIDTH_MULT: 1.01,
@@ -604,7 +636,6 @@ export const CONFIG = {
     ABOVE_EDGE_FADE_RENDER_ORDER: 30,
     GLYPH_DETAIL: 3,
     ARROW_SEGMENTS: 4,
-    IMAGE_SEGMENTS: 24,
   },
   projectPreview: {
     // The screenshots are 1600x1000.
@@ -641,7 +672,7 @@ export const CONFIG = {
     // Horizontal bands the glitch slices the plate into, and reveals it in.
     GLITCH_BANDS: 18,
     // Peak horizontal slice offset, in texture units.
-    GLITCH_SLICE: 0.07,
+    GLITCH_SLICE: 0.05,
     // Spare plate past each edge, as a fraction of the plate's own span. A
     // sliced band carries the plate's edge with it and the channel split
     // carries it further, and this is the room they have to land outside
@@ -651,7 +682,7 @@ export const CONFIG = {
     // so nothing is ever cut square at the mesh's own edge.
     GLITCH_BLEED_SOLID: 0.25,
     // Peak channel split the glitch adds on top of the travel's own.
-    GLITCH_SPLIT: 0.018,
+    GLITCH_SPLIT: 0.013,
     // Times a second the slice pattern reshuffles.
     GLITCH_HZ: 12,
     ENTER_REVEAL_DURATION: 0.26,
@@ -665,7 +696,7 @@ export const CONFIG = {
     // Over the details content, so the plate covers the buttons, but under
     // the edge fade, which is what darkens it at both ends.
     RENDER_ORDER: 15,
-    REST_GLITCH: 0.38,
+    REST_GLITCH: 0.27,
     REST_ABERRATION: 0.012,
     TUNE_SATURATION: [0.3, 1.15] as [number, number],
     TUNE_CONTRAST: [0.82, 1.1] as [number, number],
@@ -801,7 +832,7 @@ export const CONFIG = {
     HTML_Z_INDEX: 16777271,
     LETTER_SPACING: -0.02,
     HTML_LETTER_SPACING_OFFSET: -0.004,
-    SLOT_TS: [0, 0.2, 0.56, 0.75, 1],
+    SLOT_TS: [0, 0.17, 0.47, 0.64, 0.84, 1],
     SEGMENT_GAP_EM: 0.45,
     HIT_PAD_EM: 0.6,
     HOVER_DURATION: 0.15,
@@ -813,6 +844,7 @@ export const CONFIG = {
     NARROW_FONT_SIZE_MULT: 0.038,
     NARROW_MARGIN_Y_PX: 24,
     NARROW_THEME_SLOT_T: 0.74,
+    NARROW_PHOTOGRAPHY_SLOT_T: 0.43,
     NARROW_ICON_SIZE_PX: 16,
   },
   heroText: {
@@ -850,8 +882,8 @@ export const CONFIG = {
     // the tap count stable while the monitor adapts, so a DPR change never
     // forces a shader recompile.
     SCROLL_TAP_DPR_CEILING: 1.5,
-    SCROLL_BLUR: 0.022,
-    SCROLL_SPLIT: 0.04,
+    SCROLL_BLUR: 0.011,
+    SCROLL_SPLIT: 0.018,
     SCROLL_VEL_SCALE: 20.0,
     SCROLL_VEL_CLAMP: 1.0,
     SCROLL_ATTACK_MULT: 30.0,

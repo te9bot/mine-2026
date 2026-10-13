@@ -12,12 +12,19 @@ import { curlScrimCoverY } from "@/lib/detailsCurl";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { CONFIG } from "../config/constants";
 import { useSceneCapabilities } from "@/context/SceneCapabilitiesContext";
-import { ProjectOrbit } from "@/components/ProjectOrbit";
 import { SkullParticles } from "@/components/SkullParticles";
 import { SkullGlass } from "@/components/SkullGlass";
 import { furBaldSpots, pikachuSource } from "@/lib/pikachuFur";
 import type { ProjectOrbitCollider } from "@/lib/projectOrbitCollision";
 import { heroAssemblyAt } from "@/lib/heroAssembly";
+import {
+  clampElasticPosition,
+  createElasticBody,
+  elasticBodyAtRest,
+  elasticStretch,
+  resetElasticBody,
+  stepElasticBody,
+} from "@/lib/elasticBody";
 import { fitHeroModelSlot, heroModelSlot } from "@/lib/heroModelPlacement";
 
 // Nothing of the model may show above the details gradient. Cutting it there
@@ -30,10 +37,13 @@ const FOLD_CLIP_PLANES = [FOLD_CLIP];
 
 useGLTF.setDecoderPath("/draco/");
 
+const setCursor = (value: string) => {
+  document.body.style.cursor = value;
+};
+
 export default function Model({ isDebug }: { isDebug: boolean }) {
   const animGroupRef = useRef<THREE.Group>(null);
   const transitionScaleGroupRef = useRef<THREE.Group>(null);
-  const orbitAnchorRef = useRef<THREE.Group>(null);
   const mesh = useRef<THREE.Group>(null);
   const skullSurfaceRef = useRef<THREE.Group>(null);
   const orbitCollider = useRef<ProjectOrbitCollider>({ object: null, radius: 1, active: false });
@@ -58,6 +68,13 @@ export default function Model({ isDebug }: { isDebug: boolean }) {
   const previousStage = useRef(0);
 
   const { viewport } = useThree();
+
+  const elasticRootRef = useRef<THREE.Group>(null);
+  const stretchAlignRef = useRef<THREE.Group>(null);
+  const stretchScaleRef = useRef<THREE.Group>(null);
+  const stretchRestoreRef = useRef<THREE.Group>(null);
+  const elasticBody = useRef(createElasticBody());
+  const grabRef = useRef<{ startX: number; startY: number; lastX: number; lastY: number; vx: number; vy: number } | null>(null);
 
   const skullRotationGroupRef = useRef<THREE.Group>(null);
 
@@ -160,17 +177,6 @@ export default function Model({ isDebug }: { isDebug: boolean }) {
     // the same screen height.
     const foldDepthScale = modelViewport.height / viewport.height;
 
-    if (orbitAnchorRef.current && animGroupRef.current) {
-      orbitAnchorRef.current.visible = !workstationRevealed && assembly.orbitOpacity > 0;
-      orbitAnchorRef.current.position.set(
-        layoutMode === "narrow" && compactHeight ? modelViewport.width * CONFIG.model.NARROW_COMPACT_X_FRACTION : 0,
-        heroPlacement ? heroPlacement.y * modelViewport.height : CONFIG.model.BASE_MODEL_Y + assembly.rise * modelViewport.height,
-        CONFIG.model.DEPTH_Z,
-      );
-      const narrowScale = layoutMode === "narrow" ? assembly.scale * (compactHeight ? CONFIG.model.NARROW_COMPACT_HERO_SCALE : CONFIG.model.NARROW_HERO_SCALE) : 1;
-      orbitAnchorRef.current.scale.copy(animGroupRef.current.scale).multiplyScalar(narrowScale);
-    }
-
     FOLD_CLIP.constant =
       inDetails
         ? curlScrimCoverY() * foldDepthScale
@@ -253,38 +259,141 @@ export default function Model({ isDebug }: { isDebug: boolean }) {
     }
   }, -3);
 
+  const elastic = CONFIG.model.ELASTIC;
+
+  useEffect(() => {
+    const release = () => {
+      const grab = grabRef.current;
+      if (!grab) return;
+      elasticBody.current.vx += grab.vx * elastic.FLING_BOOST;
+      elasticBody.current.vy += grab.vy * elastic.FLING_BOOST;
+      grabRef.current = null;
+      setCursor("");
+    };
+    window.addEventListener("pointerup", release);
+    window.addEventListener("pointercancel", release);
+    window.addEventListener("blur", release);
+    return () => {
+      window.removeEventListener("pointerup", release);
+      window.removeEventListener("pointercancel", release);
+      window.removeEventListener("blur", release);
+      grabRef.current = null;
+      setCursor("");
+    };
+  }, [elastic.FLING_BOOST]);
+
+  const grabbable = () =>
+    !prefersReducedMotion &&
+    !!animGroupRef.current?.visible &&
+    (transitionScaleGroupRef.current?.scale.x ?? 0) > 0.05 &&
+    revealProgressRef.current <= 0.001;
+
+  useFrame((state, delta) => {
+    const root = elasticRootRef.current;
+    const align = stretchAlignRef.current;
+    const scale = stretchScaleRef.current;
+    const restore = stretchRestoreRef.current;
+    if (!root || !align || !scale || !restore) return;
+
+    const body = elasticBody.current;
+    const grab = grabRef.current;
+    if (grab && !grabbable()) {
+      grabRef.current = null;
+      setCursor("");
+    }
+
+    const active = grabRef.current;
+    if (!active && elasticBodyAtRest(body, elastic.REST_EPSILON)) {
+      if (body.x !== 0 || body.y !== 0 || body.dx !== 0 || body.dy !== 0) {
+        resetElasticBody(body);
+        root.position.set(0, 0, 0);
+        align.rotation.z = 0;
+        scale.scale.set(1, 1, 1);
+        restore.rotation.z = 0;
+      }
+      return;
+    }
+
+    const dt = Math.min(delta, 1 / 30);
+    const view = state.viewport.getCurrentViewport(state.camera, modelDepth.current);
+
+    let offset: { x: number; y: number } | null = null;
+    if (active) {
+      const cursorX = (state.pointer.x * view.width) / 2;
+      const cursorY = (state.pointer.y * view.height) / 2;
+      const smoothing = 1 - Math.exp(-elastic.VELOCITY_SMOOTHING * dt);
+      active.vx += ((cursorX - active.lastX) / dt - active.vx) * smoothing;
+      active.vy += ((cursorY - active.lastY) / dt - active.vy) * smoothing;
+      active.lastX = cursorX;
+      active.lastY = cursorY;
+      offset = { x: cursorX - active.startX, y: cursorY - active.startY };
+    }
+
+    stepElasticBody(body, offset, dt, elastic);
+    clampElasticPosition(body, view.height * elastic.MAX_OFFSET_HEIGHTS);
+
+    const stretch = elasticStretch(body, view.height, elastic.STRETCH_GAIN, elastic.MAX_STRETCH);
+    root.position.set(body.x, body.y, 0);
+    align.rotation.z = stretch.angle;
+    scale.scale.set(stretch.along, stretch.across, stretch.across);
+    restore.rotation.z = -stretch.angle;
+  }, -2);
+
   return (
-    <group>
-      <group ref={orbitAnchorRef}>
-        {surface && <ProjectOrbit colliderRef={orbitCollider} entranceProgressRef={entranceProgressRef} skullGeometry={surface} skullRef={skullSurfaceRef} />}
-      </group>
+    <group ref={elasticRootRef}>
       <group position={[0, 0.1, CONFIG.model.DEPTH_Z]} ref={animGroupRef}>
         <group ref={transitionScaleGroupRef}>
-          <group ref={mesh}>
-            <group
-              ref={skullRotationGroupRef}
-              rotation={[skullRotation.x, skullRotation.y, skullRotation.z]}
-            >
-              <group ref={skullSurfaceRef} scale={responsiveScale}>
-                {debug.skullAppearance.mode === "glass" && surface && (
-                  <SkullGlass
-                    geometry={surface}
-                    orbitCollider={orbitCollider}
-                    lowQuality={lowQuality}
-                    clippingPlanes={FOLD_CLIP_PLANES}
-                  />
-                )}
-                {debug.skullAppearance.mode !== "glass" && (
-                  <SkullParticles
-                    entranceRef={animGroupRef}
-                    orbitCollider={orbitCollider}
-                    fragments={debug.skullAppearance.mode === "fragments"}
-                    source={source}
-                    lowQuality={lowQuality}
-                    clippingPlanes={FOLD_CLIP_PLANES}
-                    furBaldSpots={baldSpots}
-                  />
-                )}
+          <group ref={stretchAlignRef}>
+            <group ref={stretchScaleRef}>
+              <group ref={stretchRestoreRef}>
+                <mesh
+                  onPointerOver={() => {
+                    if (grabbable() && !grabRef.current) setCursor("grab");
+                  }}
+                  onPointerOut={() => {
+                    if (!grabRef.current) setCursor("");
+                  }}
+                  onPointerDown={(event) => {
+                    if (!grabbable()) return;
+                    event.stopPropagation();
+                    const view = viewport.getCurrentViewport(event.camera, modelDepth.current);
+                    const cursorX = (event.pointer.x * view.width) / 2;
+                    const cursorY = (event.pointer.y * view.height) / 2;
+                    grabRef.current = { startX: cursorX, startY: cursorY, lastX: cursorX, lastY: cursorY, vx: 0, vy: 0 };
+                    setCursor("grabbing");
+                  }}
+                >
+                  <sphereGeometry args={[modelExtent.height * responsiveScale * elastic.HIT_RADIUS_MULT, 16, 12]} />
+                  <meshBasicMaterial visible={false} />
+                </mesh>
+                <group ref={mesh}>
+                  <group
+                    ref={skullRotationGroupRef}
+                    rotation={[skullRotation.x, skullRotation.y, skullRotation.z]}
+                  >
+                    <group ref={skullSurfaceRef} scale={responsiveScale}>
+                      {debug.skullAppearance.mode === "glass" && surface && (
+                        <SkullGlass
+                          geometry={surface}
+                          orbitCollider={orbitCollider}
+                          lowQuality={lowQuality}
+                          clippingPlanes={FOLD_CLIP_PLANES}
+                        />
+                      )}
+                      {debug.skullAppearance.mode !== "glass" && (
+                        <SkullParticles
+                          entranceRef={animGroupRef}
+                          orbitCollider={orbitCollider}
+                          fragments={debug.skullAppearance.mode === "fragments"}
+                          source={source}
+                          lowQuality={lowQuality}
+                          clippingPlanes={FOLD_CLIP_PLANES}
+                          furBaldSpots={baldSpots}
+                        />
+                      )}
+                    </group>
+                  </group>
+                </group>
               </group>
             </group>
           </group>

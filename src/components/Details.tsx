@@ -14,6 +14,7 @@ import {
   type DetailsSectionItem,
 } from "./DetailsScene/DetailsSection";
 import { BioSection } from "./DetailsScene/BioSection";
+import { PhotographySection } from "./DetailsScene/PhotographySection";
 import {
   projectsData,
   DEFAULT_BIO_VARIANT,
@@ -216,13 +217,25 @@ export function Details({
       1,
     );
 
+    const closingTopWorldY =
+      groupY + sectionTop - layout.sections.photography.headingY * pxTo3DHeight;
+    const closingExit = MathUtils.smoothstep(
+      closingTopWorldY,
+      -viewport.height / 2,
+      -viewport.height / 2 +
+        viewport.height * CONFIG.model.CLOSING_EXIT_VIEWPORTS,
+    );
+
     const anchor = modelAnchorRef.current;
     anchor.xFraction = companion.X;
     anchor.yFraction = companion.Y;
     anchor.scale =
-      CONFIG.model.DETAILS_POPUP_SCALE * companion.SCALE * (1 - modelExit);
+      CONFIG.model.DETAILS_POPUP_SCALE *
+      companion.SCALE *
+      (1 - modelExit) *
+      (1 - closingExit);
 
-    if (layoutMode === "narrow" && inputMode === "coarse") {
+    if (layoutMode === "narrow" && inputMode === "coarse" && projectsData.length > 0) {
       const projects = layout.sections.projects;
       const activationY =
         viewport.height *
@@ -358,22 +371,24 @@ export function Details({
         {...shared}
       />
 
-      <DetailsSection
-        heading={DETAILS_SECTION_HEADINGS.projects}
-        items={projectItems}
-        headingX={leftX}
-        headingY={sectionY("projects").headingY}
-        bodyX={bodyColumnX}
-        bodyY={sectionY("projects").bodyY}
-        bodyAnchorX="left"
-        direction="leftToRight"
-        startTrigger={startTrigger && !!revealed.projects}
-        headingGroupRef={projectsHeadingRef}
-        activeItemIndex={activeProjectIndex}
-        staggerStep={CONFIG.detailsTimings.BODY_STAGGER_STEP}
-        {...shared}
-        bodyLineHeight={layout.projectLineHeight * pxTo3DHeight}
-      />
+      {projectsData.length > 0 && (
+        <DetailsSection
+          heading={DETAILS_SECTION_HEADINGS.projects}
+          items={projectItems}
+          headingX={leftX}
+          headingY={sectionY("projects").headingY}
+          bodyX={bodyColumnX}
+          bodyY={sectionY("projects").bodyY}
+          bodyAnchorX="left"
+          direction="leftToRight"
+          startTrigger={startTrigger && !!revealed.projects}
+          headingGroupRef={projectsHeadingRef}
+          activeItemIndex={activeProjectIndex}
+          staggerStep={CONFIG.detailsTimings.BODY_STAGGER_STEP}
+          {...shared}
+          bodyLineHeight={layout.projectLineHeight * pxTo3DHeight}
+        />
+      )}
 
       <DetailsSection
         heading={DETAILS_SECTION_HEADINGS.achievements}
@@ -434,13 +449,25 @@ export function Details({
         headingY={sectionY("bio").headingY}
         textY={sectionY("bio").bodyY}
         imageWidth={layout.bioImageWidth * pxTo3DWidth}
-        imageHeight={layout.bioImageHeight * pxTo3DHeight}
         textX={leftX + layout.bioTextOffset * pxTo3DWidth}
         headingFontSize={headingSize}
         bodyFontSize={bodySize}
         bodyLineHeight={bodyLineHeight}
         pxTo3DWidth={pxTo3DWidth}
         startTrigger={startTrigger && !!revealed.bio}
+      />
+
+      <PhotographySection
+        heading={DETAILS_SECTION_HEADINGS.photography}
+        headingX={leftX}
+        headingY={sectionY("photography").headingY}
+        bookX={leftX + layout.photoBookXOffset * pxTo3DWidth}
+        bookY={sectionTop - layout.photoBookY * pxTo3DHeight}
+        bookWidthPx={layout.photoBookWidth}
+        bookHeightPx={layout.photoBookHeight}
+        headingFontSize={headingSize}
+        pxTo3DWidth={pxTo3DWidth}
+        startTrigger={startTrigger && !!revealed.photography}
       />
     </group>
   );

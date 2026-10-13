@@ -3,6 +3,7 @@ import {
   coursesData,
   educationData,
   experienceData,
+  photographyContent,
   projectsData,
   skillsData,
 } from "@/data/content";
@@ -14,11 +15,15 @@ export const DETAILS_SECTION_KEYS = [
   "achievements",
   "education",
   "courses",
+  "photography",
   "bio",
 ] as const;
 
 export type DetailsSectionKey = (typeof DETAILS_SECTION_KEYS)[number];
-export type DetailsListSectionKey = Exclude<DetailsSectionKey, "bio">;
+export type DetailsListSectionKey = Exclude<
+  DetailsSectionKey,
+  "bio" | "photography"
+>;
 
 type DetailsSectionContent = {
   heading: string;
@@ -78,12 +83,13 @@ export const DETAILS_SECTION_HEADINGS: Record<DetailsSectionKey, string> = {
   education: DETAILS_SECTION_CONTENT.education.heading,
   courses: DETAILS_SECTION_CONTENT.courses.heading,
   bio: "About me",
+  photography: photographyContent.heading,
 };
 
-export const WIDE_STACKED_SECTION_KEYS = [
+export const WIDE_STACKED_SECTION_KEYS: readonly DetailsListSectionKey[] = [
   "experience",
-  "projects",
+  ...(projectsData.length > 0 ? (["projects"] as const) : []),
   "achievements",
   "education",
   "courses",
-] as const satisfies readonly DetailsListSectionKey[];
+];
