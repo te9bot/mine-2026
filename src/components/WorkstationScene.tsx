@@ -97,6 +97,41 @@ type ReturnBridge = DesktopReturn & {
   autoScroll: ReturnBridgeAutoScroll | null;
 };
 
+function trackRayInputs(key: Float64Array, offset: number, values: ArrayLike<number>, count: number) {
+  let changed = false;
+  for (let i = 0; i < count; i++) {
+    if (key[offset + i] !== values[i]) {
+      key[offset + i] = values[i];
+      changed = true;
+    }
+  }
+  return changed;
+}
+
+function hoverRayChanged(
+  cache: { key: Float64Array; geometry: THREE.BufferGeometry | null; version: number },
+  pointer: THREE.Vector2,
+  camera: THREE.Camera,
+  mesh: THREE.Mesh,
+  followsScene: boolean,
+) {
+  const version = (mesh.geometry.getAttribute("position") as THREE.BufferAttribute).version;
+  let changed = cache.geometry !== mesh.geometry || cache.version !== version;
+  cache.geometry = mesh.geometry;
+  cache.version = version;
+  const key = cache.key;
+  if (key[0] !== pointer.x || key[1] !== pointer.y) {
+    key[0] = pointer.x;
+    key[1] = pointer.y;
+    changed = true;
+  }
+  if (!followsScene) return changed;
+  if (trackRayInputs(key, 2, camera.matrixWorld.elements, 16)) changed = true;
+  if (trackRayInputs(key, 18, camera.projectionMatrix.elements, 16)) changed = true;
+  if (trackRayInputs(key, 34, mesh.matrixWorld.elements, 16)) changed = true;
+  return changed;
+}
+
 export function WorkstationScene({ children }: { children: ReactNode }) {
   const monitorState = useMemo(createMonitorState, []);
   const { scene: crtModel } = useGLTF(CONFIG.workstation.CRT_MODEL_URL);
@@ -175,6 +210,7 @@ export function WorkstationScene({ children }: { children: ReactNode }) {
   const mouseIntensityRef = useRef(0);
   const intersectionsRef = useRef<THREE.Intersection[]>([]);
   const interactionUvRef = useRef(new THREE.Vector2());
+  const hoverRayRef = useRef({ key: new Float64Array(50).fill(NaN), geometry: null as THREE.BufferGeometry | null, version: -1, hasUv: false, uv: new THREE.Vector2() });
 
   const mapContentUv = useCallback(
     (source: THREE.Vector2 | undefined, target: THREE.Vector2) =>
@@ -293,6 +329,7 @@ export function WorkstationScene({ children }: { children: ReactNode }) {
       texture.magFilter = THREE.LinearFilter;
       texture.generateMipmaps = false;
       texture.needsUpdate = true;
+      gl.initTexture(texture);
       wallpaperTexture = texture;
 
       if (wallpaperMaterialRef.current) {
@@ -305,7 +342,7 @@ export function WorkstationScene({ children }: { children: ReactNode }) {
       cancelled = true;
       wallpaperTexture?.dispose();
     };
-  }, []);
+  }, [gl]);
 
   useEffect(() => {
     chromeMaterialRef.current = windowChromeMaterial;
@@ -867,12 +904,19 @@ export function WorkstationScene({ children }: { children: ReactNode }) {
       return;
     }
 
-    const intersections = intersectionsRef.current;
-    intersections.length = 0;
-    state.raycaster.setFromCamera(state.pointer, state.camera);
-    state.raycaster.intersectObject(interactionMeshRef.current, false, intersections);
+    const interactionMesh = interactionMeshRef.current;
+    const hoverRay = hoverRayRef.current;
+    if (hoverRayChanged(hoverRay, state.pointer, state.camera, interactionMesh, inputMode === "fine")) {
+      const intersections = intersectionsRef.current;
+      intersections.length = 0;
+      state.raycaster.setFromCamera(state.pointer, state.camera);
+      state.raycaster.intersectObject(interactionMesh, false, intersections);
+      const uv = intersections[0]?.uv;
+      hoverRay.hasUv = uv !== undefined;
+      if (uv) hoverRay.uv.copy(uv);
+    }
     const pageUv = mapContentUv(
-      intersections[0]?.uv,
+      hoverRay.hasUv ? hoverRay.uv : undefined,
       interactionUvRef.current,
     );
     const bounds = capture.desktop?.bounds;

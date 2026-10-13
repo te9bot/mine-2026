@@ -98,14 +98,17 @@ export class HeaderExclusionEffect extends Effect {
     const previousTarget = renderer.getRenderTarget();
     const previousMask = this.camera.layers.mask;
     const previousClearAlpha = renderer.getClearAlpha();
+    const matrixWorldAutoUpdate = this.scene.matrixWorldAutoUpdate;
 
     try {
+      this.scene.matrixWorldAutoUpdate = false;
       this.camera.layers.set(HEADER_LAYER);
       this.scene.background = null;
       renderer.setClearAlpha(0);
       renderer.setRenderTarget(this.target);
       renderer.render(this.scene, this.camera);
     } finally {
+      this.scene.matrixWorldAutoUpdate = matrixWorldAutoUpdate;
       this.scene.background = background;
       renderer.setClearAlpha(previousClearAlpha);
       renderer.setRenderTarget(previousTarget);

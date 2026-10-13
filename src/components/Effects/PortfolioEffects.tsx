@@ -53,6 +53,7 @@ export function PortfolioEffects() {
       let meshes = 0;
       scene.traverse(object => {
         if ("material" in object) meshes++;
+        else if ("isLight" in object) object.layers.enable(HEADER_LAYER);
       });
       if (meshes === meshCount) return;
       meshCount = meshes;

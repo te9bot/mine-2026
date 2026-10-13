@@ -266,6 +266,7 @@ function previewShader(radiusUv: { value: THREE.Vector2 }) {
  * the same frame, and a texture fetch started then would arrive late.
  */
 function useProjectPreviewTextures() {
+    const gl = useThree((state) => state.gl);
     const [textures, setTextures] = useState<Record<string, THREE.Texture>>({});
 
     useEffect(() => {
@@ -280,6 +281,7 @@ function useProjectPreviewTextures() {
                     return;
                 }
                 texture.colorSpace = THREE.SRGBColorSpace;
+                gl.initTexture(texture);
                 loaded[src] = texture;
                 setTextures({ ...loaded });
             });
@@ -289,7 +291,7 @@ function useProjectPreviewTextures() {
             cancelled = true;
             for (const texture of Object.values(loaded)) texture.dispose();
         };
-    }, []);
+    }, [gl]);
 
     return textures;
 }
