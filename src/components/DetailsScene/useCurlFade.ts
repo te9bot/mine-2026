@@ -5,13 +5,15 @@ import { useRef } from "react";
 import { Group, Vector3 } from "three";
 import { caseStudyStage } from "@/lib/caseStudyStage";
 import {
+    curlUniforms,
     curlAngle,
     curlDropOpacity,
     curlRiseOpacity,
 } from "@/lib/detailsCurl";
 
 export function useCurlFade<T extends HTMLElement = HTMLDivElement>(
-    applyOpacity: (opacity: number) => void,
+    applyOpacity: (opacity: number, riseAboveFold: number) => void,
+    extent = 0,
 ) {
     const groupRef = useRef<Group>(null);
     const twinRef = useRef<T>(null);
@@ -24,12 +26,17 @@ export function useCurlFade<T extends HTMLElement = HTMLDivElement>(
         if (!group) return;
 
         group.getWorldPosition(worldPosition.current);
-        const angle = curlAngle(worldPosition.current.y);
+        const topY = worldPosition.current.y;
+        const bottomY = topY - extent;
+        const angle = curlAngle(bottomY);
         const fade = Math.min(
-            curlRiseOpacity(worldPosition.current.y),
-            curlDropOpacity(worldPosition.current.y),
+            curlRiseOpacity(bottomY),
+            curlDropOpacity(topY),
         );
-        applyOpacity(revealedRef.current ? fade : 0);
+        applyOpacity(
+            revealedRef.current ? fade : 0,
+            Math.max(0, topY - curlUniforms.uCurlFoldY.value),
+        );
 
         // A case study flies the camera off the sheet, which lands these twins
         // over copy they have nothing to do with — still selectable, and in a

@@ -487,13 +487,6 @@ function calculateNarrowDetailsLayout({
         DETAILS_SECTION_HEADINGS.bio,
         headingFontSize,
     );
-    const bioImageWidth = contentWidth * L.NARROW_BIO_IMAGE_WIDTH_MULT;
-    const bioImageHeight = bioImageWidth * L.BIO_IMAGE_ASPECT;
-    const bioImageY = bioTopY + bioHeadingHeight + bodyTopOffset;
-    const bioTextY =
-        bioImageY +
-        bioImageHeight +
-        headingFontSize * L.NARROW_BIO_IMAGE_GAP_MULT;
     const bioLines = wrapParagraphs(
         bioVariants[bioVariant],
         contentWidth,
@@ -501,6 +494,23 @@ function calculateNarrowDetailsLayout({
         L.LETTER_SPACING,
         fontsReady,
     );
+    const bioImageGap = headingFontSize * L.NARROW_BIO_IMAGE_GAP_MULT;
+    const bioImageRoom =
+        usableHeight -
+        bioHeadingHeight -
+        bodyTopOffset -
+        bioImageGap -
+        bioLines.length * bodyLineHeight;
+    const bioImageWidth = Math.min(
+        contentWidth * L.NARROW_BIO_IMAGE_WIDTH_MULT,
+        Math.max(
+            bioImageRoom / L.BIO_IMAGE_ASPECT,
+            contentWidth * L.NARROW_BIO_IMAGE_MIN_WIDTH_MULT,
+        ),
+    );
+    const bioImageHeight = bioImageWidth * L.BIO_IMAGE_ASPECT;
+    const bioImageY = bioTopY + bioHeadingHeight + bodyTopOffset;
+    const bioTextY = bioImageY + bioImageHeight + bioImageGap;
     const bioHeight =
         bioTextY - bioTopY + bioLines.length * bodyLineHeight;
     offsets.bio = {

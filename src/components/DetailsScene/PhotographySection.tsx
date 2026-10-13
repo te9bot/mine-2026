@@ -8,6 +8,7 @@ import { CONFIG, FONTS } from "@/config/constants";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { PhotoBook } from "@/components/PhotoBook/PhotoBook";
 import { DetailsText } from "./DetailsText";
+import { curlRiseFadeSpan } from "@/lib/detailsCurl";
 import { useCurlFade } from "./useCurlFade";
 
 interface PhotographySectionProps {
@@ -20,6 +21,7 @@ interface PhotographySectionProps {
     bookHeightPx: number;
     headingFontSize: number;
     pxTo3DWidth: number;
+    pxTo3DHeight: number;
     startTrigger: boolean;
 }
 
@@ -27,12 +29,14 @@ function InlinePhotoBook({
     position,
     widthPx,
     heightPx,
+    pxTo3DHeight,
     delay,
     startTrigger,
 }: {
     position: [number, number, number];
     widthPx: number;
     heightPx: number;
+    pxTo3DHeight: number;
     delay: number;
     startTrigger: boolean;
 }) {
@@ -40,9 +44,19 @@ function InlinePhotoBook({
     const [expandedAt, setExpandedAt] = useState<number | null>(null);
     const fadeRef = useRef<HTMLDivElement>(null);
     const { groupRef, twinRef, revealedRef } = useCurlFade<HTMLDivElement>(
-        (opacity) => {
-            if (fadeRef.current) fadeRef.current.style.opacity = String(opacity);
+        (opacity, riseAboveFold) => {
+            const el = fadeRef.current;
+            if (!el) return;
+            el.style.opacity = String(opacity);
+            if (riseAboveFold <= 0) {
+                el.style.maskImage = "";
+                return;
+            }
+            const span = curlRiseFadeSpan();
+            const fold = riseAboveFold / pxTo3DHeight;
+            el.style.maskImage = `linear-gradient(to bottom, transparent ${fold - span.end / pxTo3DHeight}px, black ${fold - span.start / pxTo3DHeight}px)`;
         },
+        heightPx * pxTo3DHeight,
     );
 
     useGSAP(
@@ -102,6 +116,7 @@ export const PhotographySection = memo(function PhotographySection({
     bookHeightPx,
     headingFontSize,
     pxTo3DWidth,
+    pxTo3DHeight,
     startTrigger,
 }: PhotographySectionProps) {
     return (
@@ -127,6 +142,7 @@ export const PhotographySection = memo(function PhotographySection({
                 position={[bookX, bookY, 0]}
                 widthPx={bookWidthPx}
                 heightPx={bookHeightPx}
+                pxTo3DHeight={pxTo3DHeight}
                 delay={CONFIG.detailsTimings.BODY_DELAY}
                 startTrigger={startTrigger}
             />

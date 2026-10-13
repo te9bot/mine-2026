@@ -140,15 +140,18 @@ export default function Scene({
     return () => container.removeEventListener("webglcontextlost", onContextLost, { capture: true });
   }, [onFailure]);
 
+  const initialTier: SceneQualityTier =
+    inputMode === "coarse" ? "low" : "balanced";
   const [dpr, setDpr] = useState(1);
-  const [qualityTier, setQualityTier] = useState<SceneQualityTier>("balanced");
-  const qualityTierRef = useRef<SceneQualityTier>("balanced");
+  const [qualityTier, setQualityTier] = useState<SceneQualityTier>(initialTier);
+  const qualityTierRef = useRef<SceneQualityTier>(initialTier);
   const lastQualityChangeRef = useRef(0);
 
   const changeQuality = (
     direction: "incline" | "decline",
     cooldown: number,
   ) => {
+    if (inputMode === "coarse") return;
     const now = performance.now();
     if (now - lastQualityChangeRef.current < cooldown) return;
 

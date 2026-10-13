@@ -206,6 +206,10 @@ function fadeOverSpan(distance: number, end: number) {
     return 1 - (distance - start) / (end - start);
 }
 
+export function curlRiseFadeSpan() {
+    return { start: curlFadeSpans.start, end: curlFadeSpans.endRise };
+}
+
 export function curlRiseOpacity(worldY: number) {
     const rise = worldY - curlUniforms.uCurlFoldY.value;
     if (rise <= 0) return 1;

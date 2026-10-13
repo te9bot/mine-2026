@@ -467,6 +467,7 @@ export function Details({
         bookHeightPx={layout.photoBookHeight}
         headingFontSize={headingSize}
         pxTo3DWidth={pxTo3DWidth}
+        pxTo3DHeight={pxTo3DHeight}
         startTrigger={startTrigger && !!revealed.photography}
       />
     </group>

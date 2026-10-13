@@ -558,6 +558,28 @@
   margin-left: 10px;
 }
 
+@media (max-width: 640px) {
+  .photo-book-inline__controls {
+    gap: 6px;
+  }
+
+  .photo-book-inline .photo-book-button {
+    gap: 4px;
+    padding: 0 10px;
+    white-space: nowrap;
+  }
+
+  .photo-book-inline .photo-book-status {
+    min-width: 0;
+    flex: 1 1 auto;
+    white-space: nowrap;
+  }
+
+  .photo-book-inline__expand {
+    margin-left: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .photo-book-overlay,
   .photo-book-stage,
