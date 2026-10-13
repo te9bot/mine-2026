@@ -168,7 +168,10 @@ export default function Scene({
         ? CONFIG.performanceMonitor.LOW_DPR
         : next === "balanced"
           ? CONFIG.performanceMonitor.BALANCED_DPR
-          : Math.min(CONFIG.performanceMonitor.HIGH_DPR, window.devicePixelRatio),
+          : Math.max(
+              CONFIG.performanceMonitor.BALANCED_DPR,
+              Math.min(CONFIG.performanceMonitor.HIGH_DPR, window.devicePixelRatio),
+            ),
     );
   };
 

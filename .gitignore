@@ -53,3 +53,6 @@ plans/
 
 # local music (copyrighted, not published)
 /public/media/music/
+
+# raw photo sources
+/assets/Photography/

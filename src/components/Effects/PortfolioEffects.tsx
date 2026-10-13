@@ -58,22 +58,32 @@ export function PortfolioEffects() {
       meshCount = meshes;
       compiling = true;
       const previousTarget = gl.getRenderTarget();
-      gl.setRenderTarget(pipeline.composer.inputBuffer);
-      const pending = [gl.compileAsync(scene, camera)];
+      const layerMask = camera.layers.mask;
       const page = scene.getObjectByName("WorkstationPage");
       const surface = scene.getObjectByName("WorkstationSurface");
-      if (page && surface) {
-        const pageVisible = page.visible;
-        const surfaceVisible = surface.visible;
-        page.visible = false;
-        surface.visible = true;
+      const pageVisible = page?.visible ?? true;
+      const surfaceVisible = surface?.visible ?? true;
+      const pending: Promise<unknown>[] = [];
+      try {
+        gl.setRenderTarget(pipeline.composer.inputBuffer);
+        camera.layers.enable(HEADER_LAYER);
         pending.push(gl.compileAsync(scene, camera));
-        page.visible = pageVisible;
-        surface.visible = surfaceVisible;
+        if (page && surface) {
+          page.visible = false;
+          surface.visible = true;
+          pending.push(gl.compileAsync(scene, camera));
+        }
+      } catch {
+        meshCount = -1;
+      } finally {
+        if (page) page.visible = pageVisible;
+        if (surface) surface.visible = surfaceVisible;
+        camera.layers.mask = layerMask;
+        gl.setRenderTarget(previousTarget);
       }
-      gl.setRenderTarget(previousTarget);
       Promise.all(pending).catch(() => undefined).finally(() => { compiling = false; });
     };
+    sweep();
     const interval = window.setInterval(sweep, CONFIG.performanceMonitor.PRECOMPILE_INTERVAL_MS);
     const stop = window.setTimeout(() => window.clearInterval(interval), CONFIG.performanceMonitor.PRECOMPILE_WINDOW_MS);
     return () => {
