@@ -3,9 +3,25 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 
+const title = "Talha Zobayed Tanim — Frontend Engineer & Data Analyst";
+const description = "Portfolio of Talha Zobayed Tanim, a frontend engineer and data analyst from Dhaka with a visual designer's eye.";
+
 export const metadata: Metadata = {
-    title: "Talha Zobayed Tanim — Frontend Engineer & Data Analyst",
-    description: "Portfolio of Talha Zobayed Tanim, a frontend engineer and data analyst from Dhaka with a visual designer's eye.",
+    metadataBase: new URL("https://talha.cloud"),
+    title,
+    description,
+    openGraph: {
+        type: "website",
+        url: "/",
+        siteName: "talha.cloud",
+        title,
+        description,
+    },
+    twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+    },
 };
 
 const karla = localFont({
