@@ -56,13 +56,13 @@ function boundsModel(file) {
   return scene;
 }
 
-const crt = boundsModel("public/glbs/crt-monitor.glb");
+const crt = boundsModel("assets/crt-monitor/crt-monitor.glb");
 const keyboard = boundsModel("public/glbs/keyboard.glb");
 const desk = boundsModel("public/glbs/workstation-desk.glb");
-const turntable = boundsModel("public/glbs/turntable.glb");
+const turntable = boundsModel("assets/turntable/turntable.glb");
 const frame = getCRTReferenceFrame(crt);
 const C = CONFIG.workstation;
-const skateboard = boundsModel(`public${C.SKATEBOARD_MODEL_URL}`);
+const skateboard = boundsModel("assets/skateboard/skateboard-deck.glb");
 assert(skateboard.getObjectByName("Skateboard_Deck"), "Wall skateboard loads the finished deck");
 const deckBounds = new THREE.Box3().setFromObject(skateboard.getObjectByName("Skateboard_Deck"));
 const deckSize = deckBounds.getSize(new THREE.Vector3());
@@ -125,7 +125,7 @@ for (const axis of ["x", "z"]) {
 assert(tb.min.z > C.WINDOW_POSITION.z + 0.1, "Open lid clears wall and sill");
 assert(tb.max.x < db.min.x, "Cabinet music area clears main desk");
 assert(Math.abs(C.CABINET_POSITION.y - C.CABINET_SIZE.y + 0.72) < 1e-6, "Raised cabinet remains grounded");
-const speakerAsset = boundsModel(`public${C.SPEAKER_MODEL_URL}`);
+const speakerAsset = boundsModel("assets/edifier-r1280dbs/edifier-r1280dbs.glb");
 const speakerBounds = [C.LEFT_SPEAKER_POSITION, C.RIGHT_SPEAKER_POSITION].map((p, i) => {
   const speaker = speakerAsset.getObjectByName(i ? "Edifier_Active" : "Edifier_Passive");
   assert(speaker, "Both Edifier variants are exported");

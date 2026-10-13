@@ -5,7 +5,7 @@ import { createMonitorControls, MONITOR_CONTROLS } from '../src/lib/monitorContr
 import { createMonitorState, MONITOR_DEFAULTS, toggleMonitorButton, setMonitorKnob, resetMonitorKnob, type MonitorKnob } from '../src/lib/monitorState';
 import { createMonitorScreenRuntime, createMonitorUniforms, mapMonitorScreenUv } from '../src/lib/monitorScreen';
 
-const file = readFileSync('public/glbs/crt-monitor.glb');
+const file = readFileSync('assets/crt-monitor/crt-monitor.glb');
 const jsonSize = file.readUInt32LE(12);
 const gltf = JSON.parse(file.subarray(20, 20 + jsonSize).toString());
 const binary = file.subarray(28 + jsonSize);

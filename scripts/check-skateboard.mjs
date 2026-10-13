@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const raw = readFileSync(process.argv[2] ?? "public/glbs/skateboard-deck.glb");
+const raw = readFileSync(process.argv[2] ?? "assets/skateboard/skateboard-deck.glb");
 const jsonLength = raw.readUInt32LE(12);
 const asset = JSON.parse(raw.subarray(20, 20 + jsonLength).toString());
 const binary = raw.subarray(28 + jsonLength);
